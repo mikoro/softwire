@@ -1,1 +1,0 @@
-dmd source\main.d lib\DerelictGLFW3.lib lib\DerelictGL3.lib lib\DerelictFT.lib -Iimport -odobj -ofsoftwire -O -release -inline -noboundscheck -L/SUBSYSTEM:WINDOWS

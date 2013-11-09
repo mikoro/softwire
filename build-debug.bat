@@ -1,1 +1,0 @@
-dmd source\main.d lib\DerelictGLFW3.lib lib\DerelictGL3.lib lib\DerelictFT.lib -Iimport -odobj -ofsoftwired -debug -g -unittest
