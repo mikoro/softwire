@@ -3,8 +3,8 @@ import derelict.glfw3.glfw3;
 import derelict.opengl3.gl;
 import derelict.freetype.ft;
 
-int screenWidth = 1920;
-int screenHeight = 1200;
+int screenWidth = 1280;
+int screenHeight = 800;
 
 int main()
 {
@@ -12,10 +12,12 @@ int main()
 	DerelictGL.load();
 	DerelictFT.load();
 
+	glfwSetErrorCallback(&glfwErrorCallback);
+
 	if (!glfwInit())
 		return -1;
 
-	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Softwire", glfwGetPrimaryMonitor(), null);
+	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Softwire", null, null);
 
 	if (!window)
 	{
@@ -25,6 +27,7 @@ int main()
 
 	glfwMakeContextCurrent(window);
 	DerelictGL.reload();
+	glfwSetKeyCallback(window, &glfwKeyCallback);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -47,4 +50,18 @@ int main()
 
 	glfwTerminate();
 	return 0;
+}
+
+private extern(C) nothrow
+{
+	void glfwErrorCallback(int error, const(char)* description)
+	{
+		printf("GLFW error: %s", description);
+	}
+
+	void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
