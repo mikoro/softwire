@@ -1,27 +1,12 @@
 import std.stdio;
 import std.string;
+import std.file;
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
 import derelict.freetype.ft;
 
 int screenWidth = 1280;
 int screenHeight = 800;
-
-string vertexShaderString =
-"#version 330\n"
-"layout(location = 0) in vec4 position;"
-"void main()"
-"{"
-"   gl_Position = position;"
-"}";
-
-string fragmentShaderString =
-"#version 330\n"
-"out vec4 outputColor;"
-"void main()"
-"{"
-"   outputColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);"
-"}";
 
 int main()
 {
@@ -46,11 +31,12 @@ int main()
 	DerelictGL3.reload();
 	glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 	glfwSetKeyCallback(window, &glfwKeyCallback);
+	glfwSwapInterval(1);
 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	const(char*) vertexShaderStringZ = vertexShaderString.toStringz();
-	const(char*) fragmentShaderStringZ = fragmentShaderString.toStringz();
+	const(char*) vertexShaderStringZ = readText("data/basic.vs.glsl").toStringz();
+	const(char*) fragmentShaderStringZ = readText("data/basic.fs.glsl").toStringz();
 	glShaderSource(vertexShader, 1, &vertexShaderStringZ, null);
 	glCompileShader(vertexShader);
 	glShaderSource(fragmentShader, 1, &fragmentShaderStringZ, null);
@@ -61,11 +47,16 @@ int main()
 	glAttachShader(program, fragmentShader);
 	glLinkProgram(program);
 
+	GLint timeUniformLocation = glGetUniformLocation(program, "time");
+
 	float[] vertexPositions =
 	[
 		0, 0.5, 0.0, 1.0,
 		0.5, -0.5, 0.0, 1.0,
 		-0.5, -0.5, 0.0, 1.0,
+		1, 0.0, 0.0, 1.0,
+		0.0, 1.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
 	];
 
 	GLuint positionBufferObject;
@@ -84,9 +75,13 @@ int main()
 
 		glUseProgram(program);
 
+		glUniform1f(timeUniformLocation, glfwGetTime());
+
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, null);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, cast(void*)48);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
