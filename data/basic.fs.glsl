@@ -1,12 +1,12 @@
 #version 330
 
-smooth in vec4 myColor;
+uniform sampler2D in_textureSampler;
 
-uniform float time;
+in vec2 pass_uv;
 
-out vec4 outputColor;
+out vec3 out_color;
 
 void main()
 {
-    outputColor = vec4(myColor.r * sin(-time), myColor.g * cos(time), myColor.b * sin(time), 1.0f);
+	out_color = texture2D(in_textureSampler, pass_uv).rgb;
 }

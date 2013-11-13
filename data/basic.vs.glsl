@@ -1,15 +1,12 @@
 #version 330
 
-layout (location = 0) in vec4 position;
-layout (location = 1) in vec4 color;
+layout (location = 0) in vec3 in_position;
+layout (location = 1) in vec2 in_uv;
 
-uniform float time;
-
-smooth out vec4 myColor;
+out vec2 pass_uv;
 
 void main()
 {
-	vec4 offset = vec4(cos(time) * 0.5f, sin(time) * 0.5f, 0.0f, 0.0f);
-    gl_Position = position + offset;
-    myColor = color;
+    gl_Position = vec4(in_position, 1.0);
+	pass_uv = in_uv;
 }
