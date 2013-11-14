@@ -8,7 +8,7 @@ class FpsCounter
 		lastTime = glfwGetTime();
 	}
 
-	void countFrame()
+	void tick()
 	{
 		smoothFrametime = smoothingFactor * previousFrametime + (1.0 - smoothingFactor) * previousSmoothFrametime;
 
