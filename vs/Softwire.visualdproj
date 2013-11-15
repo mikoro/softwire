@@ -50,7 +50,7 @@
   <imppath>../import</imppath>
   <fileImppath />
   <outdir>../obj</outdir>
-  <objdir>Intermediate</objdir>
+  <objdir>Temp</objdir>
   <objname />
   <libname />
   <doDocComments>0</doDocComments>
@@ -144,7 +144,7 @@
   <imppath>../import</imppath>
   <fileImppath />
   <outdir>../obj</outdir>
-  <objdir>Intermediate</objdir>
+  <objdir>Temp</objdir>
   <objname />
   <libname />
   <doDocComments>0</doDocComments>
@@ -189,9 +189,9 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="Softwire">
-  <File path="..\source\game.d" />
   <File path="..\source\fpscounter.d" />
   <File path="..\source\framebuffer.d" />
+  <File path="..\source\game.d" />
   <File path="..\source\main.d" />
  </Folder>
 </DProject>

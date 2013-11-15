@@ -36,7 +36,12 @@ class Game
 	{
 		while (!glfwWindowShouldClose(window))
 		{
+			auto fb = framebuffer.getFramebufferData();
+
+			fb[] = 128;
+
 			framebuffer.render();
+			framebuffer.clear();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -53,6 +58,7 @@ class Game
 
 	void shutdown()
 	{
+		framebuffer.shutdown();
 		glfwTerminate();
 	}
 
