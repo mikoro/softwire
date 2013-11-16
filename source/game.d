@@ -1,33 +1,45 @@
 import std.stdio;
-import std.string;
 
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
 
+import logger;
 import framebuffer;
 import fpscounter;
 
 class Game
 {
+	this(ILogger logger)
+	{
+		this.logger = logger;
+	}
+
 	void initialize()
 	{
 		glfwSetErrorCallback(&glfwErrorCallback);
 
+		logger.logInfo("Initializing GLFW");
+
 		if (!glfwInit())
 			throw new Exception("Could not initialize GLFW");
+
+		logger.logInfo("Creating the window");
 
 		window = glfwCreateWindow(displayWidth, displayHeight, "Softwire", null, null);
 
 		if (!window)
 			throw new Exception("Could not create the window");
 
+		logger.logInfo("Loading OpenGL functions");
+		
 		glfwMakeContextCurrent(window);
 		DerelictGL3.reload();
+
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 		glfwSetKeyCallback(window, &glfwKeyCallback);
 		glfwSwapInterval(0);
 
-		framebuffer = new Framebuffer();
+		framebuffer = new Framebuffer(logger);
 		framebuffer.initialize(displayWidth, displayHeight);
 		renderFpsCounter = new FpsCounter();
 	}
@@ -47,12 +59,6 @@ class Game
 			glfwPollEvents();
 
 			renderFpsCounter.tick();
-			writeln(renderFpsCounter.getFps());
-
-			GLenum error = glGetError();
-
-			if (error != GL_NO_ERROR)
-				throw new Exception(format("OpenGL error: %s", error));
 		}
 	}
 
@@ -64,13 +70,13 @@ class Game
 
 	private
 	{
+		ILogger logger;
 		GLFWwindow* window;
+		Framebuffer framebuffer;
+		FpsCounter renderFpsCounter;
 
 		int displayWidth = 1280;
 		int displayHeight = 800;
-
-		Framebuffer framebuffer;
-		FpsCounter renderFpsCounter;
 	}
 }
 

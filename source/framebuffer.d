@@ -1,16 +1,24 @@
-import std.random;
 import std.string;
 
 import derelict.opengl3.gl3;
 
+import logger;
+
 class Framebuffer
 {
+	this(ILogger logger)
+	{
+		this.logger = logger;
+	}
+
 	void initialize(int framebufferWidth, int framebufferHeight)
 	{
 		this.framebufferWidth = framebufferWidth;
 		this.framebufferHeight = framebufferHeight;
 		framebufferData = new ubyte[framebufferWidth * framebufferHeight * 4];
 		framebufferData[] = 0;
+
+		logger.logInfo("Compiling shaders");
 
 		GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
@@ -30,6 +38,8 @@ class Framebuffer
 		glDeleteShader(fragmentShaderId);
 
 		textureSamplerId = glGetUniformLocation(shaderProgramId, "in_textureSampler");
+
+		logger.logInfo("Allocating vertex and texture memory");
 
 		glGenVertexArrays(1, &vertexArrayObjectId);
 		glBindVertexArray(vertexArrayObjectId);
@@ -96,6 +106,8 @@ class Framebuffer
 
 	private
 	{
+		ILogger logger;
+
 		int framebufferWidth;
 		int framebufferHeight;
 		ubyte[] framebufferData;

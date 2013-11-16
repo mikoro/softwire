@@ -4,7 +4,7 @@
   <obj>0</obj>
   <link>0</link>
   <lib>0</lib>
-  <subsystem>1</subsystem>
+  <subsystem>2</subsystem>
   <multiobj>0</multiobj>
   <singleFileCompilation>0</singleFileCompilation>
   <oneobj>0</oneobj>
@@ -98,7 +98,7 @@
   <obj>0</obj>
   <link>0</link>
   <lib>0</lib>
-  <subsystem>1</subsystem>
+  <subsystem>2</subsystem>
   <multiobj>0</multiobj>
   <singleFileCompilation>0</singleFileCompilation>
   <oneobj>0</oneobj>
@@ -192,6 +192,7 @@
   <File path="..\source\fpscounter.d" />
   <File path="..\source\framebuffer.d" />
   <File path="..\source\game.d" />
+  <File path="..\source\logger.d" />
   <File path="..\source\main.d" />
  </Folder>
 </DProject>

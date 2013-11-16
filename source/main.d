@@ -2,19 +2,32 @@ import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
 import derelict.freetype.ft;
 
+import logger;
 import game;
 
 int main()
 {
-	DerelictGLFW3.load();
-	DerelictGL3.load();
-	DerelictFT.load();
+	ILogger logger = new FileLogger("softwire.log");
 
-	Game game = new Game();
+	try
+	{
+		logger.logInfo("Loading shared libraries");
 
-	game.initialize();
-	game.mainloop();
-	game.shutdown();
+		DerelictGLFW3.load();
+		DerelictGL3.load();
+		DerelictFT.load();
+
+		Game game = new Game(logger);
+
+		game.initialize();
+		game.mainloop();
+		game.shutdown();
+	}
+	catch(Exception ex)
+	{
+		logger.logException(ex);
+		return -1;
+	}
 
 	return 0;
 }

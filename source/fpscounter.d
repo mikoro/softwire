@@ -2,7 +2,7 @@ import derelict.glfw3.glfw3;
 
 class FpsCounter
 {
-	this(double smoothingFactor = 0.001)
+	this(double smoothingFactor = 0.01)
 	{
 		this.smoothingFactor = smoothingFactor;
 		lastTime = glfwGetTime();
