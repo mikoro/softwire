@@ -19,8 +19,16 @@ int main()
 
 		Game game = new Game(logger);
 
+		logger.logInfo("Initializing the game");
+
 		game.initialize();
+
+		logger.logInfo("Entering the mainloop");
+
 		game.mainloop();
+
+		logger.logInfo("Shutting down the game");
+
 		game.shutdown();
 	}
 	catch(Exception ex)
