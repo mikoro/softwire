@@ -7,6 +7,7 @@ import derelict.opengl3.gl3;
 import logger;
 import framebuffer;
 import fpscounter;
+import rasterizer;
 
 class Game
 {
@@ -51,7 +52,7 @@ class Game
 	{
 		while (!glfwWindowShouldClose(window))
 		{
-			framebuffer.data[] = 128;
+			Rasterizer.drawRectangle(framebuffer, 0, 0, 1280, 800);
 
 			framebuffer.render();
 			framebuffer.clear();

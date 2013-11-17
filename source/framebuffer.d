@@ -6,10 +6,9 @@ import logger;
 
 interface IFramebuffer
 {
-	@property ubyte[] data();
+	@property uint[] data();
 	@property uint width();
 	@property uint height();
-	@property uint pixelSize();
 }
 
 class Framebuffer : IFramebuffer
@@ -23,7 +22,7 @@ class Framebuffer : IFramebuffer
 	{
 		framebufferWidth = width;
 		framebufferHeight = height;
-		framebufferData = new ubyte[framebufferWidth * framebufferHeight * pixelSize];
+		framebufferData = new uint[framebufferWidth * framebufferHeight];
 		framebufferData[] = 0;
 
 		logger.logInfo("Compiling shaders");
@@ -107,16 +106,15 @@ class Framebuffer : IFramebuffer
 		glDeleteProgram(shaderProgramId);
 	}
 
-	@property ubyte[] data() { return framebufferData; }
+	@property uint[] data() { return framebufferData; }
 	@property uint width() { return framebufferWidth; }
 	@property uint height() { return framebufferHeight; }
-	@property uint pixelSize() { return 4; }
 
 	private
 	{
 		Logger logger;
 
-		ubyte[] framebufferData;
+		uint[] framebufferData;
 		uint framebufferWidth;
 		uint framebufferHeight;
 

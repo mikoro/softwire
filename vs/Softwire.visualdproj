@@ -194,5 +194,6 @@
   <File path="..\source\game.d" />
   <File path="..\source\logger.d" />
   <File path="..\source\main.d" />
+  <File path="..\source\rasterizer.d" />
  </Folder>
 </DProject>
