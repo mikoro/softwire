@@ -51,9 +51,7 @@ class Game
 	{
 		while (!glfwWindowShouldClose(window))
 		{
-			auto fb = framebuffer.getFramebufferData();
-
-			fb[] = 128;
+			framebuffer.data[] = 128;
 
 			framebuffer.render();
 			framebuffer.clear();

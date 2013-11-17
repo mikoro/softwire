@@ -4,18 +4,26 @@ import derelict.opengl3.gl3;
 
 import logger;
 
-class Framebuffer
+interface IFramebuffer
+{
+	@property ubyte[] data();
+	@property uint width();
+	@property uint height();
+	@property uint pixelSize();
+}
+
+class Framebuffer : IFramebuffer
 {
 	this(Logger logger)
 	{
 		this.logger = logger;
 	}
 
-	void initialize(int framebufferWidth, int framebufferHeight)
+	void initialize(uint width, uint height)
 	{
-		this.framebufferWidth = framebufferWidth;
-		this.framebufferHeight = framebufferHeight;
-		framebufferData = new ubyte[framebufferWidth * framebufferHeight * 4];
+		framebufferWidth = width;
+		framebufferHeight = height;
+		framebufferData = new ubyte[framebufferWidth * framebufferHeight * pixelSize];
 		framebufferData[] = 0;
 
 		logger.logInfo("Compiling shaders");
@@ -90,11 +98,6 @@ class Framebuffer
 		framebufferData[] = 0;
 	}
 
-	ubyte[] getFramebufferData()
-	{
-		return framebufferData;
-	}
-
 	void shutdown()
 	{
 		glDeleteSamplers(1, &samplerId);
@@ -104,13 +107,18 @@ class Framebuffer
 		glDeleteProgram(shaderProgramId);
 	}
 
+	@property ubyte[] data() { return framebufferData; }
+	@property uint width() { return framebufferWidth; }
+	@property uint height() { return framebufferHeight; }
+	@property uint pixelSize() { return 4; }
+
 	private
 	{
 		Logger logger;
 
-		int framebufferWidth;
-		int framebufferHeight;
 		ubyte[] framebufferData;
+		uint framebufferWidth;
+		uint framebufferHeight;
 
 		GLuint vertexArrayObjectId;
 		GLuint shaderProgramId;
