@@ -7,7 +7,7 @@ import game;
 
 int main()
 {
-	ILogger logger = new FileLogger("softwire.log");
+	Logger logger = new FileLogger("softwire.log");
 
 	try
 	{
@@ -25,7 +25,7 @@ int main()
 	}
 	catch(Exception ex)
 	{
-		logger.logException(ex);
+		logger.logThrowable(ex);
 		return -1;
 	}
 

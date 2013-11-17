@@ -9,7 +9,7 @@ import fpscounter;
 
 class Game
 {
-	this(ILogger logger)
+	this(Logger logger)
 	{
 		this.logger = logger;
 	}
@@ -34,6 +34,8 @@ class Game
 		
 		glfwMakeContextCurrent(window);
 		DerelictGL3.reload();
+
+		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 		glfwSetKeyCallback(window, &glfwKeyCallback);
@@ -70,7 +72,7 @@ class Game
 
 	private
 	{
-		ILogger logger;
+		Logger logger;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		FpsCounter renderFpsCounter;

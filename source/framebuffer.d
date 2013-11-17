@@ -6,7 +6,7 @@ import logger;
 
 class Framebuffer
 {
-	this(ILogger logger)
+	this(Logger logger)
 	{
 		this.logger = logger;
 	}
@@ -106,7 +106,7 @@ class Framebuffer
 
 	private
 	{
-		ILogger logger;
+		Logger logger;
 
 		int framebufferWidth;
 		int framebufferHeight;
