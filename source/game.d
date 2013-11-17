@@ -1,4 +1,5 @@
-import std.stdio;
+import std.c.stdlib;
+import std.conv;
 
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
@@ -72,7 +73,7 @@ class Game
 
 	private
 	{
-		Logger logger;
+		static Logger logger;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		FpsCounter renderFpsCounter;
@@ -91,7 +92,14 @@ extern(C) private nothrow
 
 	void glfwErrorCallback(int error, const(char)* description)
 	{
-		printf("GLFW error: %s\n", description);
+		try
+		{
+			Game.logger.logError("GLFW: %s", to!string(description));
+		}
+		catch(Throwable t)
+		{
+			exit(-1);
+		}
 	}
 
 	void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
