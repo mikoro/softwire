@@ -5,6 +5,7 @@ import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
 
 import logger;
+import settings;
 import framebuffer;
 import fpscounter;
 import rasterizer;
@@ -18,6 +19,8 @@ class Game
 
 	void initialize()
 	{
+		settings = new Settings(logger, "settings.json");
+
 		glfwSetErrorCallback(&glfwErrorCallback);
 
 		logger.logInfo("Initializing GLFW");
@@ -27,7 +30,7 @@ class Game
 
 		logger.logInfo("Creating the window");
 
-		window = glfwCreateWindow(displayWidth, displayHeight, "Softwire", null, null);
+		window = glfwCreateWindow(settings.displayWidth, settings.displayHeight, "Softwire", settings.isFullscreen ? glfwGetPrimaryMonitor() : null, null);
 
 		if (!window)
 			throw new Exception("Could not create the window");
@@ -41,10 +44,10 @@ class Game
 
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 		glfwSetKeyCallback(window, &glfwKeyCallback);
-		glfwSwapInterval(0);
+		glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
 
 		framebuffer = new Framebuffer(logger);
-		framebuffer.initialize(displayWidth, displayHeight);
+		framebuffer.initialize(settings.framebufferWidth, settings.framebufferHeight);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -52,7 +55,8 @@ class Game
 	{
 		while (!glfwWindowShouldClose(window))
 		{
-			Rasterizer.drawRectangle(framebuffer, 0, 0, 1280, 800);
+			Rasterizer.drawRectangle(framebuffer, 0, 0, settings.framebufferWidth, settings.framebufferHeight, 0x1188ccff);
+			Rasterizer.drawRectangle(framebuffer, 1, 1, 8, 8, 0xffaa33ff);
 
 			framebuffer.render();
 			framebuffer.clear();
@@ -73,12 +77,10 @@ class Game
 	private
 	{
 		static Logger logger;
+		Settings settings;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		FpsCounter renderFpsCounter;
-
-		int displayWidth = 1280;
-		int displayHeight = 800;
 	}
 }
 

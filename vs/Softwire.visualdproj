@@ -195,5 +195,6 @@
   <File path="..\source\logger.d" />
   <File path="..\source\main.d" />
   <File path="..\source\rasterizer.d" />
+  <File path="..\source\settings.d" />
  </Folder>
 </DProject>
