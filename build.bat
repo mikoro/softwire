@@ -1,6 +1,6 @@
 @echo off
 
-set sources=source\main.d source\logger.d source\game.d source\framebuffer.d source\fpscounter.d
+set sources=source\main.d source\logger.d source\game.d source\settings.d source\framebuffer.d source\rasterizer.d source\fpscounter.d
 set libraries=lib\DerelictGLFW3.lib lib\DerelictGL3.lib lib\DerelictFT.lib
 
 echo Compiling debug...
