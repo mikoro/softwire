@@ -61,7 +61,7 @@ class Framebuffer : IFramebuffer
 
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, cast(void*)0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glGenSamplers(1, &samplerId);
@@ -79,7 +79,7 @@ class Framebuffer : IFramebuffer
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebufferWidth, framebufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, framebufferData.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebufferWidth, framebufferHeight, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, framebufferData.ptr);
 		glBindSampler(0, samplerId);
 		glUniform1i(textureSamplerId, 0);
 

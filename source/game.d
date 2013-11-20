@@ -7,6 +7,7 @@ import derelict.opengl3.gl3;
 import logger;
 import settings;
 import framebuffer;
+import text;
 import fpscounter;
 import rasterizer;
 
@@ -48,6 +49,10 @@ class Game
 
 		framebuffer = new Framebuffer(logger);
 		framebuffer.initialize(settings.framebufferWidth, settings.framebufferHeight);
+
+		text = new Text(logger, "data/fonts/inconsolata.otf", 50);
+		text2 = new Text(logger, "data/fonts/inconsolata.otf", 14);
+
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -55,8 +60,10 @@ class Game
 	{
 		while (!glfwWindowShouldClose(window))
 		{
-			Rasterizer.drawRectangle(framebuffer, 0, 0, settings.framebufferWidth, settings.framebufferHeight, 0x1188ccff);
-			Rasterizer.drawRectangle(framebuffer, 1, 1, 8, 8, 0xffaa33ff);
+			//Rasterizer.drawRectangle(framebuffer, 0, 800/2, 100, 100, 0x00afafaf);
+			text.drawText(framebuffer, 10, 800/2, "FPS: 56 A B C D E F G H");
+			text.drawText(framebuffer, 10, 800/2 - 200, "abcdefghijklmnopqrstubwxzyåäö");
+			text2.drawText(framebuffer, 10, 800/2 + 200, "The quick brown fox jumps over the lazy dog");
 
 			framebuffer.render();
 			framebuffer.clear();
@@ -80,6 +87,8 @@ class Game
 		Settings settings;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
+		Text text;
+		Text text2;
 		FpsCounter renderFpsCounter;
 	}
 }

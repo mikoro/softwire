@@ -1,15 +1,15 @@
 {
   "display":
   {
-    "width": 500,
-    "height": 500,
+    "width": 1280,
+    "height": 800,
     "fullscreen": 0,
     "vsync": 0
   },
   
   "framebuffer":
   {
-    "width": 10,
-    "height": 10
+    "width": 1280,
+    "height": 800
   }
 }

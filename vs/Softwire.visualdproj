@@ -196,5 +196,6 @@
   <File path="..\source\main.d" />
   <File path="..\source\rasterizer.d" />
   <File path="..\source\settings.d" />
+  <File path="..\source\text.d" />
  </Folder>
 </DProject>

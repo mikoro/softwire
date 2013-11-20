@@ -6,7 +6,10 @@ class Rasterizer
 	{
 		foreach (i; y .. y + height)
 		{
-			framebuffer.data[(x + i * framebuffer.width) .. (x + width + i * framebuffer.width)] = color;
+			int start = (x + i * framebuffer.width);
+			int end = (x + i * framebuffer.width + width);
+
+			framebuffer.data[start .. end] = color;
 		}
 	}
 }
