@@ -46,8 +46,9 @@ class Game
 		else
 			framebuffer = new FramebufferOpenGL3(logger, settings);
 
-		text = new Text(logger, "data/fonts/aller.ttf", 16);
+		text = new Text(logger, "data/fonts/aller.ttf", 14);
 		renderFpsCounter = new FpsCounter();
+		physicsFpsCounter = new FpsCounter();
 	}
 
 	~this()
@@ -59,20 +60,52 @@ class Game
 	{
 		logger.logInfo("Starting the mainloop");
 
+		double timeStep = 1.0 / 60;
+		double currentTime = glfwGetTime();
+		double timeAccumulator = 0;
+
 		while (!glfwWindowShouldClose(window))
 		{
-			Rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width, framebuffer.height, 0x7f0000ff);
-			text.drawText(framebuffer, 5, cast(int)framebuffer.height - 16, "FPS: " ~ to!dstring(cast(int)renderFpsCounter.getFps()));
-			text.drawText(framebuffer, 5, 15, "The quick brown fox jumps over the lazy dog - Äiti öljyää Åkea.");
-			
-			framebuffer.render();
-			glfwSwapBuffers(window);
-			framebuffer.clear();
+			double newTime = glfwGetTime();
+			double frameTime = newTime - currentTime;
+			currentTime = newTime;
 
-			renderFpsCounter.tick();
+			if (frameTime > 0.25)
+				frameTime = 0.25;
 
-			glfwPollEvents();
+			timeAccumulator += frameTime;
+
+			while (timeAccumulator >= timeStep)
+			{
+				update(timeStep);
+				timeAccumulator -= timeStep;
+			}
+
+			double interpolation = timeAccumulator / timeStep;
+			render(interpolation);
 		}
+	}
+
+	void update(double timeStep)
+	{
+		glfwPollEvents();
+
+		physicsFpsCounter.tick();
+	}
+
+	void render(double interpolation)
+	{
+		Rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width, framebuffer.height, 0x7fffffff);
+		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps());
+		text.drawText(framebuffer, 5, framebuffer.height - 32, "Physics FPS: " ~ physicsFpsCounter.getRateLimitedFps());
+		text.drawText(framebuffer, 5, 15, "The quick brown fox jumps over the lazy dog - Äiti öljyää Åkea.");
+
+		framebuffer.render();
+		framebuffer.clear();
+
+		glfwSwapBuffers(window);
+
+		renderFpsCounter.tick();
 	}
 
 	private
@@ -82,8 +115,8 @@ class Game
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		Text text;
-		Text text2;
 		FpsCounter renderFpsCounter;
+		FpsCounter physicsFpsCounter;
 	}
 }
 

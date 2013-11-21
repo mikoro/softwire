@@ -1,11 +1,16 @@
+import std.conv;
+import std.string;
+
 import derelict.glfw3.glfw3;
 
 class FpsCounter
 {
-	this(double smoothingFactor = 0.01)
+	this(double smoothingFactor = 0.05, double rateLimitInterval = 0.05)
 	{
 		this.smoothingFactor = smoothingFactor;
-		lastTime = glfwGetTime();
+		this.rateLimitInterval = rateLimitInterval;
+
+		lastTime = lastRateLimitTime = glfwGetTime();
 	}
 
 	void tick()
@@ -23,6 +28,19 @@ class FpsCounter
 		return 1.0 / smoothFrametime;
 	}
 
+	dstring getRateLimitedFps()
+	{
+		double currentTime = glfwGetTime();
+
+		if ((currentTime - lastRateLimitTime) > rateLimitInterval)
+		{
+			rateLimitedFps = to!dstring(format("%.1f", getFps()));
+			lastRateLimitTime = currentTime;
+		}
+
+		return rateLimitedFps;
+	}
+
 	private
 	{
 		double smoothingFactor = 0;
@@ -30,5 +48,8 @@ class FpsCounter
 		double previousSmoothFrametime = 0;
 		double smoothFrametime = 0;
 		double lastTime = 0;
+		double lastRateLimitTime = 0;
+		double rateLimitInterval = 0;
+		dstring rateLimitedFps;
 	}
 }

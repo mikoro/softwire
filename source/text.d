@@ -34,7 +34,7 @@ class Text
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
 
-	void drawText(Framebuffer framebuffer, int x, int y, const(dchar[]) text)
+	void drawText(Framebuffer framebuffer, int x, int y, dstring text)
 	{
 		int offsetX = x;
 
