@@ -11,6 +11,7 @@
   {
     "width": 1280,
     "height": 800,
+    "useLinearFiltering": 1,
     "useLegacyOpenGL": 1
   }
 }

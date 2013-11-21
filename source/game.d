@@ -42,13 +42,11 @@ class Game
 		glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
 
 		if (settings.useLegacyOpenGL)
-			framebuffer = new FramebufferOpenGL1(logger, settings.framebufferWidth, settings.framebufferHeight);
+			framebuffer = new FramebufferOpenGL1(logger, settings);
 		else
-			framebuffer = new FramebufferOpenGL3(logger, settings.framebufferWidth, settings.framebufferHeight);
+			framebuffer = new FramebufferOpenGL3(logger, settings);
 
-		text = new Text(logger, "data/fonts/inconsolata.otf", 50);
-		text = new Text(logger, "data/fonts/inconsolata.otf", 50);
-		text2 = new Text(logger, "data/fonts/inconsolata.otf", 14);
+		text = new Text(logger, "data/fonts/inconsolata.otf", 16);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -63,11 +61,10 @@ class Game
 
 		while (!glfwWindowShouldClose(window))
 		{
-			//Rasterizer.drawRectangle(framebuffer, 0, 800/2, 100, 100, 0x00afafaf);
-			text.drawText(framebuffer, 10, 800/2, "FPS: 56 A B C D E F G H");
-			text.drawText(framebuffer, 10, 800/2 - 200, "abcdefghijklmnopqrstubwxzyåäö");
-			text2.drawText(framebuffer, 10, 800/2 + 200, "The quick brown fox jumps over the lazy dog");
-
+			//Rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width, framebuffer.height, 0x00afafaf);
+			text.drawText(framebuffer, 5, cast(int)framebuffer.height - 16, "FPS: " ~ to!dstring(cast(int)renderFpsCounter.getFps()));
+			text.drawText(framebuffer, 5, 15, "The quick brown fox jumps over the lazy dog - Äiti öljyää Åkea.");
+			
 			framebuffer.render();
 			glfwSwapBuffers(window);
 			framebuffer.clear();

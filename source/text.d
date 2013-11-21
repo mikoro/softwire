@@ -68,8 +68,8 @@ class Text
 			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
-			glyph.adjustX = face.glyph.metrics.horiBearingX >> 6;
-			glyph.adjustY = face.glyph.metrics.horiBearingY >> 6;
+			glyph.adjustX = face.glyph.bitmap_left;
+			//glyph.adjustY = face.glyph.bitmap_top;
 			glyph.advanceX = face.glyph.metrics.horiAdvance >> 6;
 
 			const(ubyte)* bufferIndex = bitmap.buffer;
@@ -103,9 +103,11 @@ class Text
 		}
 
 		Logger logger;
-		static bool isFreetypeLoaded;
+		Glyph[dchar] glyphs;
+
 		FT_Library library;
 		FT_Face face;
-		Glyph[dchar] glyphs;
+
+		static bool isFreetypeLoaded;
 	}
 }

@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 
 import logger;
+import settings;
 
 class Framebuffer
 {
@@ -28,7 +29,7 @@ class Framebuffer
 
 class FramebufferOpenGL3 : Framebuffer
 {
-	this(Logger logger, uint width, uint height)
+	this(Logger logger, Settings settings)
 	{
 		this.logger = logger;
 
@@ -39,8 +40,8 @@ class FramebufferOpenGL3 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
-		framebufferWidth = width;
-		framebufferHeight = height;
+		framebufferWidth = settings.framebufferWidth;
+		framebufferHeight = settings.framebufferHeight;
 		framebufferData = new uint[framebufferWidth * framebufferHeight];
 
 		logger.logInfo("Compiling shaders");
@@ -83,9 +84,17 @@ class FramebufferOpenGL3 : Framebuffer
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glGenSamplers(1, &samplerId);
-		glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glSamplerParameteri(samplerId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+		if (settings.useLinearFiltering)
+		{
+			glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+		{
+			glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
 
 		glClearColor(1.0, 0.0, 0.0, 0.0);
 	}
@@ -176,7 +185,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 class FramebufferOpenGL1 : Framebuffer
 {
-	this(Logger logger, uint width, uint height)
+	this(Logger logger, Settings settings)
 	{
 		this.logger = logger;
 
@@ -186,8 +195,8 @@ class FramebufferOpenGL1 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
-		framebufferWidth = width;
-		framebufferHeight = height;
+		framebufferWidth = settings.framebufferWidth;
+		framebufferHeight = settings.framebufferHeight;
 		framebufferData = new uint[framebufferWidth * framebufferHeight];
 
 		glEnable(GL_TEXTURE_2D);
@@ -196,9 +205,18 @@ class FramebufferOpenGL1 : Framebuffer
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+		if (settings.useLinearFiltering)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
