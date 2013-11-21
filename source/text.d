@@ -45,7 +45,7 @@ class Text
 
 			foreach (i; 0 .. glyphs[character].bitmapHeight)
 			{
-				int framebufferStart = offsetX + glyphs[character].adjustX + (y + glyphs[character].adjustY + i) * framebuffer.width;
+				int framebufferStart = offsetX + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
 				int bitmapStart = i * glyphs[character].bitmapWidth;
 
 				foreach (j; 0 .. glyphs[character].bitmapWidth)
@@ -78,8 +78,8 @@ class Text
 			glyph.bitmap = new int[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
-			glyph.adjustX = face.glyph.bitmap_left;
-			//glyph.adjustY = face.glyph.bitmap_top;
+			glyph.adjustX = face.glyph.metrics.horiBearingX >> 6;
+			glyph.adjustY = (face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6;
 			glyph.advanceX = face.glyph.metrics.horiAdvance >> 6;
 
 			const(ubyte)* bufferIndex = bitmap.buffer;

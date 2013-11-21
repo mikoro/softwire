@@ -46,7 +46,7 @@ class Game
 		else
 			framebuffer = new FramebufferOpenGL3(logger, settings);
 
-		text = new Text(logger, "data/fonts/inconsolata.otf", 16);
+		text = new Text(logger, "data/fonts/aller.ttf", 16);
 		renderFpsCounter = new FpsCounter();
 	}
 
