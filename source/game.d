@@ -61,7 +61,7 @@ class Game
 
 		while (!glfwWindowShouldClose(window))
 		{
-			//Rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width, framebuffer.height, 0x00afafaf);
+			Rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width, framebuffer.height, 0x7f0000ff);
 			text.drawText(framebuffer, 5, cast(int)framebuffer.height - 16, "FPS: " ~ to!dstring(cast(int)renderFpsCounter.getFps()));
 			text.drawText(framebuffer, 5, 15, "The quick brown fox jumps over the lazy dog - Äiti öljyää Åkea.");
 			

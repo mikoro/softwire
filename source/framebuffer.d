@@ -15,15 +15,15 @@ class Framebuffer
 		framebufferData[] = 0;
 	}
 
-	@property uint[] data() { return framebufferData; }
-	@property uint width() { return framebufferWidth; }
-	@property uint height() { return framebufferHeight; }
+	@property int[] data() { return framebufferData; }
+	@property int width() { return framebufferWidth; }
+	@property int height() { return framebufferHeight; }
 
 	private
 	{
-		uint[] framebufferData;
-		uint framebufferWidth;
-		uint framebufferHeight;
+		int[] framebufferData;
+		int framebufferWidth;
+		int framebufferHeight;
 	}
 }
 
@@ -42,7 +42,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		framebufferWidth = settings.framebufferWidth;
 		framebufferHeight = settings.framebufferHeight;
-		framebufferData = new uint[framebufferWidth * framebufferHeight];
+		framebufferData = new int[framebufferWidth * framebufferHeight];
 
 		logger.logInfo("Compiling shaders");
 
@@ -197,7 +197,7 @@ class FramebufferOpenGL1 : Framebuffer
 
 		framebufferWidth = settings.framebufferWidth;
 		framebufferHeight = settings.framebufferHeight;
-		framebufferData = new uint[framebufferWidth * framebufferHeight];
+		framebufferData = new int[framebufferWidth * framebufferHeight];
 
 		glEnable(GL_TEXTURE_2D);
 		glClearColor(1.0, 0.0, 0.0, 0.0);

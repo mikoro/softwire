@@ -46,11 +46,21 @@ class Text
 			foreach (i; 0 .. glyphs[character].bitmapHeight)
 			{
 				int framebufferStart = offsetX + glyphs[character].adjustX + (y + glyphs[character].adjustY + i) * framebuffer.width;
-				int framebufferEnd = framebufferStart + glyphs[character].bitmapWidth;
 				int bitmapStart = i * glyphs[character].bitmapWidth;
-				int bitmapEnd = bitmapStart + glyphs[character].bitmapWidth;
 
-				framebuffer.data[framebufferStart .. framebufferEnd] = glyphs[character].bitmap[bitmapStart .. bitmapEnd];
+				foreach (j; 0 .. glyphs[character].bitmapWidth)
+				{
+					byte* bg = cast(byte*)&framebuffer.data[framebufferStart + j];
+					byte* fg = cast(byte*)&glyphs[character].bitmap[bitmapStart + j];
+
+					int alpha = (fg[3] & 0xff) + 1;
+					int inverseAlpha = 257 - alpha;
+
+					bg[0] = cast(byte)((alpha * (fg[0] & 0xff) + inverseAlpha * (bg[0] & 0xff)) >> 8);
+					bg[1] = cast(byte)((alpha * (fg[1] & 0xff) + inverseAlpha * (bg[1] & 0xff)) >> 8);
+					bg[2] = cast(byte)((alpha * (fg[2] & 0xff) + inverseAlpha * (bg[2] & 0xff)) >> 8);
+					bg[3] = cast(byte)0xff;
+				}
 			}
 
 			offsetX += glyphs[character].advanceX;
@@ -65,7 +75,7 @@ class Text
 			FT_Bitmap* bitmap = &face.glyph.bitmap;
 
 			Glyph glyph;
-			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
+			glyph.bitmap = new int[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
 			glyph.adjustX = face.glyph.bitmap_left;
@@ -77,14 +87,7 @@ class Text
 			foreach_reverse (i; 0 .. bitmap.rows)
 			{
 				foreach (j; 0 .. bitmap.width)
-				{
-					ubyte red = bufferIndex[j];
-					ubyte green = bufferIndex[j];
-					ubyte blue = bufferIndex[j];
-					ubyte alpha = 0xff;
-
-					glyph.bitmap[i * bitmap.width + j] = (alpha << 24) | (blue << 16) | (green << 8) | red;
-				}
+					glyph.bitmap[i * bitmap.width + j] = ( bufferIndex[j] << 24) | 0xffffff;
 
 				bufferIndex += bitmap.pitch;
 			}
@@ -94,7 +97,7 @@ class Text
 
 		struct Glyph
 		{
-			uint[] bitmap;
+			int[] bitmap;
 			int bitmapWidth;
 			int bitmapHeight;
 			int adjustX;
