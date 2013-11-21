@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOURCES="source/main.d source/logger.d source/game.d source/settings.d source/framebuffer.d source/rasterizer.d source\text.d source/fpscounter.d"
+SOURCES="source/main.d source/logger.d source/game.d source/settings.d source/framebuffer.d source/rasterizer.d source/text.d source/fpscounter.d"
 LIBRARIES="-L-Llib -L-ldl -L-lDerelictGLFW3 -L-lDerelictGL3 -L-lDerelictFT"
 
 echo Compiling debug...
