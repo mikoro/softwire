@@ -2,7 +2,7 @@ import std.c.stdlib;
 import std.conv;
 
 import derelict.glfw3.glfw3;
-import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 
 import logger;
 import settings;
@@ -16,11 +16,11 @@ class Game
 	this(Logger logger)
 	{
 		this.logger = logger;
-	}
-
-	void initialize()
-	{
 		settings = new Settings(logger, "settings.json");
+
+		logger.logInfo("Loading GLFW 3 functions");
+
+		DerelictGLFW3.load();
 
 		glfwSetErrorCallback(&glfwErrorCallback);
 
@@ -36,28 +36,31 @@ class Game
 		if (!window)
 			throw new Exception("Could not create the window");
 
-		logger.logInfo("Loading OpenGL functions");
-		
 		glfwMakeContextCurrent(window);
-		DerelictGL3.reload();
-
-		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
-
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 		glfwSetKeyCallback(window, &glfwKeyCallback);
 		glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
 
-		framebuffer = new Framebuffer(logger);
-		framebuffer.initialize(settings.framebufferWidth, settings.framebufferHeight);
+		if (settings.useLegacyOpenGL)
+			framebuffer = new FramebufferOpenGL1(logger, settings.framebufferWidth, settings.framebufferHeight);
+		else
+			framebuffer = new FramebufferOpenGL3(logger, settings.framebufferWidth, settings.framebufferHeight);
 
 		text = new Text(logger, "data/fonts/inconsolata.otf", 50);
+		text = new Text(logger, "data/fonts/inconsolata.otf", 50);
 		text2 = new Text(logger, "data/fonts/inconsolata.otf", 14);
-
 		renderFpsCounter = new FpsCounter();
+	}
+
+	~this()
+	{
+		glfwTerminate();
 	}
 
 	void mainloop()
 	{
+		logger.logInfo("Starting the mainloop");
+
 		while (!glfwWindowShouldClose(window))
 		{
 			//Rasterizer.drawRectangle(framebuffer, 0, 800/2, 100, 100, 0x00afafaf);
@@ -66,19 +69,13 @@ class Game
 			text2.drawText(framebuffer, 10, 800/2 + 200, "The quick brown fox jumps over the lazy dog");
 
 			framebuffer.render();
+			glfwSwapBuffers(window);
 			framebuffer.clear();
 
-			glfwSwapBuffers(window);
-			glfwPollEvents();
-
 			renderFpsCounter.tick();
-		}
-	}
 
-	void shutdown()
-	{
-		framebuffer.shutdown();
-		glfwTerminate();
+			glfwPollEvents();
+		}
 	}
 
 	private

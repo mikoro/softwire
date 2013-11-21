@@ -20,6 +20,7 @@ class Settings
 	@property bool vsyncEnabled() { return cast(bool)json.object["display"].object["vsync"].integer; }
 	@property uint framebufferWidth() { return cast(uint)json.object["framebuffer"].object["width"].uinteger; }
 	@property uint framebufferHeight() { return cast(uint)json.object["framebuffer"].object["height"].uinteger; }
+	@property bool useLegacyOpenGL() { return cast(bool)json.object["framebuffer"].object["useLegacyOpenGL"].integer; }
  
 	private
 	{

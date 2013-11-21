@@ -1,29 +1,47 @@
 import std.string;
 
+import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 
 import logger;
 
-interface IFramebuffer
+class Framebuffer
 {
-	@property uint[] data();
-	@property uint width();
-	@property uint height();
-}
+	abstract void render();
 
-class Framebuffer : IFramebuffer
-{
-	this(Logger logger)
+	void clear()
 	{
-		this.logger = logger;
+		framebufferData[] = 0;
 	}
 
-	void initialize(uint width, uint height)
+	@property uint[] data() { return framebufferData; }
+	@property uint width() { return framebufferWidth; }
+	@property uint height() { return framebufferHeight; }
+
+	private
 	{
+		uint[] framebufferData;
+		uint framebufferWidth;
+		uint framebufferHeight;
+	}
+}
+
+class FramebufferOpenGL3 : Framebuffer
+{
+	this(Logger logger, uint width, uint height)
+	{
+		this.logger = logger;
+
+		logger.logInfo("Loading OpenGL 3 functions");
+
+		DerelictGL3.load();
+		DerelictGL3.reload();
+
+		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
+
 		framebufferWidth = width;
 		framebufferHeight = height;
 		framebufferData = new uint[framebufferWidth * framebufferHeight];
-		framebufferData[] = 0;
 
 		logger.logInfo("Compiling shaders");
 
@@ -65,14 +83,24 @@ class Framebuffer : IFramebuffer
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glGenSamplers(1, &samplerId);
-		glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glSamplerParameteri(samplerId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+		glClearColor(1.0, 0.0, 0.0, 0.0);
 	}
 
-	void render()
+	~this()
 	{
-		glClearColor(1.0, 0.0, 0.0, 0.0);
+		glDeleteSamplers(1, &samplerId);
+		glDeleteTextures(1, &textureId);
+		glDeleteBuffers(1, &vertexAndUvBufferId);
+		glDeleteVertexArrays(1, &vertexArrayObjectId);
+		glDeleteProgram(shaderProgramId);
+	}
+
+	override void render()
+	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgramId);
@@ -92,31 +120,9 @@ class Framebuffer : IFramebuffer
 		glUseProgram(0);
 	}
 
-	void clear()
-	{
-		framebufferData[] = 0;
-	}
-
-	void shutdown()
-	{
-		glDeleteSamplers(1, &samplerId);
-		glDeleteTextures(1, &textureId);
-		glDeleteBuffers(1, &vertexAndUvBufferId);
-		glDeleteVertexArrays(1, &vertexArrayObjectId);
-		glDeleteProgram(shaderProgramId);
-	}
-
-	@property uint[] data() { return framebufferData; }
-	@property uint width() { return framebufferWidth; }
-	@property uint height() { return framebufferHeight; }
-
 	private
 	{
 		Logger logger;
-
-		uint[] framebufferData;
-		uint framebufferWidth;
-		uint framebufferHeight;
 
 		GLuint vertexArrayObjectId;
 		GLuint shaderProgramId;
@@ -165,5 +171,58 @@ class Framebuffer : IFramebuffer
 			{
 			out_color = texture2D(in_textureSampler, pass_uv).rgb;
 			}";
+	}
+}
+
+class FramebufferOpenGL1 : Framebuffer
+{
+	this(Logger logger, uint width, uint height)
+	{
+		this.logger = logger;
+
+		logger.logInfo("Loading legacy OpenGL functions");
+
+		DerelictGL.load();
+
+		logger.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
+
+		framebufferWidth = width;
+		framebufferHeight = height;
+		framebufferData = new uint[framebufferWidth * framebufferHeight];
+
+		glEnable(GL_TEXTURE_2D);
+		glClearColor(1.0, 0.0, 0.0, 0.0);
+
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	override void render()
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebufferWidth, framebufferHeight, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, framebufferData.ptr);
+		
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  0.0);
+		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  0.0);
+		glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0,  0.0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0,  0.0);
+		glEnd();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	private
+	{
+		Logger logger;
+
+		GLuint textureId;
 	}
 }

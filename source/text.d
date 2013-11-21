@@ -12,6 +12,13 @@ class Text
 	{
 		this.logger = logger;
 
+		if (!isFreetypeLoaded)
+		{
+			logger.logInfo("Loading Freetype functions");
+			DerelictFT.load();
+			isFreetypeLoaded = true;
+		}
+
 		logger.logInfo("Loading font data from %s", fontFileName);
 
 		FT_Error error = FT_Init_FreeType(&library);
@@ -27,7 +34,7 @@ class Text
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
 
-	void drawText(IFramebuffer framebuffer, int x, int y, const(dchar[]) text)
+	void drawText(Framebuffer framebuffer, int x, int y, const(dchar[]) text)
 	{
 		int offsetX = x;
 
@@ -54,9 +61,7 @@ class Text
 	{
 		void generateGlyph(dchar character)
 		{
-			FT_UInt index = FT_Get_Char_Index(face, character);
-			FT_Load_Glyph(face, index, FT_LOAD_FORCE_AUTOHINT);
-			FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL);
+			FT_Load_Char(face, character, FT_LOAD_FORCE_AUTOHINT | FT_LOAD_RENDER);
 			FT_Bitmap* bitmap = &face.glyph.bitmap;
 
 			Glyph glyph;
@@ -98,9 +103,9 @@ class Text
 		}
 
 		Logger logger;
-		Glyph[dchar] glyphs;
-
+		static bool isFreetypeLoaded;
 		FT_Library library;
 		FT_Face face;
+		Glyph[dchar] glyphs;
 	}
 }

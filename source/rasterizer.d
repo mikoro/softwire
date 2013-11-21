@@ -2,7 +2,7 @@ import framebuffer;
 
 class Rasterizer
 {
-	static void drawRectangle(IFramebuffer framebuffer, uint x, uint y, uint width, uint height, int color)
+	static void drawRectangle(Framebuffer framebuffer, uint x, uint y, uint width, uint height, int color)
 	{
 		foreach (i; y .. y + height)
 		{
