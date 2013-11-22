@@ -9,8 +9,7 @@
   
   "framebuffer":
   {
-    "width": 1280,
-    "height": 800,
+    "scale": 1,
     "useLinearFiltering": 1,
     "useLegacyOpenGL": 1
   }

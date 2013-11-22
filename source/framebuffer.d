@@ -40,8 +40,8 @@ class FramebufferOpenGL3 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
-		framebufferWidth = settings.framebufferWidth;
-		framebufferHeight = settings.framebufferHeight;
+		framebufferWidth = settings.displayWidth / settings.framebufferScale;
+		framebufferHeight = settings.displayHeight / settings.framebufferScale;
 		framebufferData = new uint[framebufferWidth * framebufferHeight];
 
 		logger.logInfo("Compiling shaders");
@@ -195,8 +195,8 @@ class FramebufferOpenGL1 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
-		framebufferWidth = settings.framebufferWidth;
-		framebufferHeight = settings.framebufferHeight;
+		framebufferWidth = settings.displayWidth / settings.framebufferScale;
+		framebufferHeight = settings.displayHeight / settings.framebufferScale;
 		framebufferData = new uint[framebufferWidth * framebufferHeight];
 
 		glEnable(GL_TEXTURE_2D);
