@@ -16,14 +16,14 @@ class Framebuffer
 	}
 
 	@property uint[] data() { return framebufferData; }
-	@property uint width() { return framebufferWidth; }
-	@property uint height() { return framebufferHeight; }
+	@property int width() { return framebufferWidth; }
+	@property int height() { return framebufferHeight; }
 
 	private
 	{
 		uint[] framebufferData;
-		uint framebufferWidth;
-		uint framebufferHeight;
+		int framebufferWidth;
+		int framebufferHeight;
 	}
 }
 

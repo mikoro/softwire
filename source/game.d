@@ -100,8 +100,12 @@ class Game
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			rasterizer.drawRectangle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 20, 0x7fffffff);
+			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 20, 0x7fffffff);
+			rasterizer.drawCircle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 0x7fffffff);
 		}
+
+		foreach (i; 0 .. 1000)
+			rasterizer.drawCircle(framebuffer, 200, 200, 20, 0xffffffff);
 
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 32, "Physics FPS: " ~ physicsFpsCounter.getRateLimitedFps(), 0x7fffffff);
