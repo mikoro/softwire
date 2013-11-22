@@ -8,7 +8,7 @@ import framebuffer;
 
 class Text
 {
-	this(Logger logger, string fontFileName, int size)
+	this(Logger logger, string fontFileName, uint size)
 	{
 		this.logger = logger;
 
@@ -34,9 +34,9 @@ class Text
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
 
-	void drawText(Framebuffer framebuffer, int x, int y, dstring text)
+	void drawText(Framebuffer framebuffer, uint x, uint y, dstring text, uint color)
 	{
-		int offsetX = x;
+		uint offsetX = x;
 
 		foreach (character; text)
 		{
@@ -45,21 +45,36 @@ class Text
 
 			foreach (i; 0 .. glyphs[character].bitmapHeight)
 			{
-				int framebufferStart = offsetX + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
-				int bitmapStart = i * glyphs[character].bitmapWidth;
+				uint framebufferStart = offsetX + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
+				uint bitmapStart = i * glyphs[character].bitmapWidth;
 
 				foreach (j; 0 .. glyphs[character].bitmapWidth)
 				{
-					byte* bg = cast(byte*)&framebuffer.data[framebufferStart + j];
-					byte* fg = cast(byte*)&glyphs[character].bitmap[bitmapStart + j];
+					ubyte* fg1 = cast(ubyte*)&color;
+					ubyte* fg2 = cast(ubyte*)&glyphs[character].bitmap[bitmapStart + j];
 
-					int alpha = (fg[3] & 0xff) + 1;
-					int inverseAlpha = 257 - alpha;
+					if (fg1[3] == 0 || fg2[3] == 0)
+						continue;
 
-					bg[0] = cast(byte)((alpha * (fg[0] & 0xff) + inverseAlpha * (bg[0] & 0xff)) >> 8);
-					bg[1] = cast(byte)((alpha * (fg[1] & 0xff) + inverseAlpha * (bg[1] & 0xff)) >> 8);
-					bg[2] = cast(byte)((alpha * (fg[2] & 0xff) + inverseAlpha * (bg[2] & 0xff)) >> 8);
-					bg[3] = cast(byte)0xff;
+					ubyte finalAlpha = cast(ubyte)(fg2[3] / (255.0 / fg1[3]));
+					uint finalColor = (finalAlpha << 24) | (color & 0x00ffffff);
+					ubyte* fg3 = cast(ubyte*)&finalColor;
+
+					if (fg3[3] == 0xff)
+					{
+						framebuffer.data[framebufferStart + j] = finalColor;
+						continue;
+					}
+
+					ubyte* bg = cast(ubyte*)(&framebuffer.data[framebufferStart + j]);
+
+					uint alpha = fg3[3] + 1;
+					uint invAlpha = 257 - alpha;
+
+					bg[0] = cast(ubyte)((alpha * fg3[0] + invAlpha * bg[0]) >> 8);
+					bg[1] = cast(ubyte)((alpha * fg3[1] + invAlpha * bg[1]) >> 8);
+					bg[2] = cast(ubyte)((alpha * fg3[2] + invAlpha * bg[2]) >> 8);
+					bg[3] = 0xff;
 				}
 			}
 
@@ -75,7 +90,7 @@ class Text
 			FT_Bitmap* bitmap = &face.glyph.bitmap;
 
 			Glyph glyph;
-			glyph.bitmap = new int[bitmap.rows * bitmap.width];
+			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
 			glyph.adjustX = face.glyph.metrics.horiBearingX >> 6;
@@ -97,12 +112,12 @@ class Text
 
 		struct Glyph
 		{
-			int[] bitmap;
-			int bitmapWidth;
-			int bitmapHeight;
-			int adjustX;
-			int adjustY;
-			int advanceX;
+			uint[] bitmap;
+			uint bitmapWidth;
+			uint bitmapHeight;
+			uint adjustX;
+			uint adjustY;
+			uint advanceX;
 		}
 
 		Logger logger;

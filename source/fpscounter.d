@@ -5,7 +5,7 @@ import derelict.glfw3.glfw3;
 
 class FpsCounter
 {
-	this(double smoothingFactor = 0.05, double rateLimitInterval = 0.05)
+	this(double smoothingFactor = 0.05, double rateLimitInterval = 0.025)
 	{
 		this.smoothingFactor = smoothingFactor;
 		this.rateLimitInterval = rateLimitInterval;

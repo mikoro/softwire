@@ -1,26 +1,45 @@
 import framebuffer;
 
-class Rasterizer
+void drawRectangle(Framebuffer framebuffer, uint x, uint y, uint width, uint height, uint color)
 {
-	static void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height, int color)
+	ubyte* fg = cast(ubyte*)&color;
+
+	if (fg[3] == 0)
+		return;
+
+	if (fg[3] == 0xff)
 	{
 		foreach (i; y .. y + height)
 		{
-			int start = x + i * framebuffer.width;
-			
+			uint start = x + i * framebuffer.width;
+
 			foreach(j; 0 .. width)
 			{
-				byte* bg = cast(byte*)&framebuffer.data[start + j];
-				byte* fg = cast(byte*)&color;
-
-				int alpha = (fg[3] & 0xff) + 1;
-				int inverseAlpha = 257 - alpha;
-				
-				bg[0] = cast(byte)((alpha * (fg[0] & 0xff) + inverseAlpha * (bg[0] & 0xff)) >> 8);
-				bg[1] = cast(byte)((alpha * (fg[1] & 0xff) + inverseAlpha * (bg[1] & 0xff)) >> 8);
-				bg[2] = cast(byte)((alpha * (fg[2] & 0xff) + inverseAlpha * (bg[2] & 0xff)) >> 8);
-				bg[3] = cast(byte)0xff;
+				framebuffer.data[start + j] = color;
 			}
+		}
+
+		return;
+	}
+
+	uint alpha = fg[3] + 1;
+	uint invAlpha = 257 - alpha;
+	uint afg0 = alpha * fg[0];
+	uint afg1 = alpha * fg[1];
+	uint afg2 = alpha * fg[2];
+
+	foreach (i; y .. y + height)
+	{
+		uint start = x + i * framebuffer.width;
+
+		foreach(j; 0 .. width)
+		{
+			ubyte* bg = cast(ubyte*)(&framebuffer.data[start + j]);
+
+			bg[0] = cast(ubyte)((afg0 + invAlpha * bg[0]) >> 8);
+			bg[1] = cast(ubyte)((afg1 + invAlpha * bg[1]) >> 8);
+			bg[2] = cast(ubyte)((afg2 + invAlpha * bg[2]) >> 8);
+			bg[3] = 0xff;
 		}
 	}
 }
