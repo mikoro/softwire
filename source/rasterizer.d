@@ -1,10 +1,33 @@
+import std.stdio;
+
 import framebuffer;
 
-void drawRectangle(Framebuffer framebuffer, uint x, uint y, uint width, uint height, uint color)
+void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height, uint color)
 {
 	ubyte* fg = cast(ubyte*)&color;
 
 	if (fg[3] == 0)
+		return;
+
+	if (x < 0)
+	{
+		width += x;
+		x = 0;
+	}
+
+	if (y < 0)
+	{
+		height += y;
+		y = 0;
+	}
+
+	if (x + width > cast(int)framebuffer.width)
+		width -= ((x + width) - cast(int)framebuffer.width);
+
+	if (y + height > cast(int)framebuffer.height)
+		height -= ((y + height) - cast(int)framebuffer.height);
+
+	if (width <= 0 || height <= 0)
 		return;
 
 	if (fg[3] == 0xff)

@@ -95,15 +95,20 @@ class Game
 
 	void render(double interpolation)
 	{
-		rasterizer.drawRectangle(framebuffer, 0, 0, framebuffer.width / 2, framebuffer.height / 2, 0x7fffffff);
-		rasterizer.drawRectangle(framebuffer, framebuffer.width / 2, 0, framebuffer.width / 2, framebuffer.height / 2, 0x7f0000ff);
-		rasterizer.drawRectangle(framebuffer, 0, framebuffer.height / 2, framebuffer.width / 2, framebuffer.height / 2, 0x7f00ff00);
-		rasterizer.drawRectangle(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebuffer.width / 2, framebuffer.height / 2, 0x7fff0000);
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0xffffffff);
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			rasterizer.drawRectangle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 20, 0x7fffffff);
+		}
+
+		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 32, "Physics FPS: " ~ physicsFpsCounter.getRateLimitedFps(), 0x7fffffff);
-		text.drawText(framebuffer, 5, 15, "The quick brown fox jumps over the lazy dog - Äiti öljyää Åkea.", 0x10ffffff);
 
+		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
+		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
+		
 		framebuffer.render();
 		framebuffer.clear();
 
