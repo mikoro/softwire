@@ -1,8 +1,3 @@
 /.dub
-/*.dll
-/*.obj
-/*.exe
-/softwire
-/softwired
-/*.log
+/build
 Thumbs.db
