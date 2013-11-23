@@ -1,0 +1,26 @@
+RT_ICON ICON "softwire.ico"
+GLFW_ICON ICON "softwire.ico"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "FileDescription", "A simple 3D software rasterizer"
+      VALUE "ProductName", "Softwire"
+      VALUE "InternalName", "Softwire"
+      VALUE "ProductVersion", "1.0"
+      VALUE "FileVersion", "1.0"
+      VALUE "CompanyName", "Mikko Ronkainen"
+      VALUE "LegalCopyright", "Mikko Ronkainen"
+      VALUE "OriginalFilename", "softwire.exe"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

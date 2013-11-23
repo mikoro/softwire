@@ -95,13 +95,13 @@ class Game
 
 	void render(double interpolation)
 	{
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
+		//double mouseX, mouseY;
+		//glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 20, 0x7fffffff);
-			rasterizer.drawCircle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 0x7fffffff);
+			//rasterizer.drawCircle(framebuffer, cast(int)mouseX - cast(int)10, cast(int)(settings.displayHeight) - cast(int)mouseY - 10, 20, 0x7fffffff);
 		}
 
 		foreach (i; 0 .. 1000)
@@ -110,8 +110,8 @@ class Game
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 32, "Physics FPS: " ~ physicsFpsCounter.getRateLimitedFps(), 0x7fffffff);
 
-		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
-		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
+		//text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
+		//text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
 		
 		framebuffer.render();
 		framebuffer.clear();

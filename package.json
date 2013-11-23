@@ -1,0 +1,21 @@
+{
+	"name": "softwire",
+	"description": "A simple 3D software rasterizer",
+	"authors": ["Mikko Ronkainen"],
+	"homepage": "http://mikkoronkainen.com",
+	"license": "Apache-2.0",
+	"targetType": "executable",
+	"targetPath": "",
+	"targetName": "softwire",
+	"sourceFiles-windows-dmd": ["misc/softwire.res"],
+	"sourceFiles-windows-gdc": ["misc/softwire.o"],
+	"lflags-windows-dmd": ["/SUBSYSTEM:WINDOWS"],
+	"dflags-windows-gdc": ["-mwindows", "-ggdb"],
+	"copyFiles-windows": ["misc/glfw3.dll", "misc/freetype.dll"],
+	"dependencies":
+	{
+	  "derelict-glfw3" : "~master",
+	  "derelict-gl3" : "~master",
+	  "derelict-ft" : "~master",
+	}
+}

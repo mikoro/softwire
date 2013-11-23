@@ -1,9 +1,8 @@
-/obj
-/vs/Temp
-*.suo
-*.exe
-*.log
-*.a
-softwire
-softwired
-
+/.dub
+/*.dll
+/*.obj
+/*.exe
+/softwire
+/softwired
+/*.log
+Thumbs.db
