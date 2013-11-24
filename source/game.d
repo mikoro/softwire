@@ -1,7 +1,7 @@
 import std.c.stdlib;
 import std.conv;
 
-import derelict.glfw3.glfw3;
+import deimos.glfw.glfw3;
 import derelict.opengl3.gl;
 
 import logger;
@@ -17,10 +17,6 @@ class Game
 	{
 		this.logger = logger;
 		settings = new Settings(logger, "settings.json");
-
-		logger.logInfo("Loading GLFW 3 functions");
-
-		DerelictGLFW3.load();
 
 		glfwSetErrorCallback(&glfwErrorCallback);
 
@@ -133,7 +129,7 @@ class Game
 	}
 }
 
-extern(C) private nothrow
+extern(C) private
 {
 	void glfwFramebufferSizeCallback(GLFWwindow* window, int framebufferWidth, int framebufferHeight)
 	{

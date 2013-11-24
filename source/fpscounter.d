@@ -1,7 +1,7 @@
 import std.conv;
 import std.string;
 
-import derelict.glfw3.glfw3;
+import deimos.glfw.glfw3;
 
 class FpsCounter
 {
