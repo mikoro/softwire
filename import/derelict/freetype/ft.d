@@ -135,8 +135,8 @@ class DerelictFTLoader : SharedLibLoader {
         bindFunc(cast(void**)&FT_Sfnt_Table_Info, "FT_Sfnt_Table_Info");
         bindFunc(cast(void**)&FT_Get_CMap_Language_ID, "FT_Get_CMap_Language_ID");
         bindFunc(cast(void**)&FT_Get_CMap_Format, "FT_Get_CMap_Format");
-        bindFunc(cast(void**)&FT_Get_BDF_Charset_ID, "FT_Get_BDF_Charset_ID");
-        bindFunc(cast(void**)&FT_Get_BDF_Property, "FT_Get_BDF_Property");
+        //bindFunc(cast(void**)&FT_Get_BDF_Charset_ID, "FT_Get_BDF_Charset_ID");
+        //bindFunc(cast(void**)&FT_Get_BDF_Property, "FT_Get_BDF_Property");
         bindFunc(cast(void**)&FT_Stream_OpenGzip, "FT_Stream_OpenGzip");
         bindFunc(cast(void**)&FT_Stream_OpenLZW, "FT_Stream_OpenLZW");
         bindFunc(cast(void**)&FT_Get_WinFNT_Header, "FT_Get_WinFNT_Header");
