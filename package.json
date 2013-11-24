@@ -7,6 +7,8 @@
 	"targetType": "executable",
 	"targetPath": "build",
 	"targetName": "softwire",
+	"sourcePaths": ["source", "import"],
+	"importPaths": ["source", "import"],
 	"sourceFiles-windows-dmd": ["misc/resources/softwire.dmd.res"],
 	"sourceFiles-windows-gdc": ["misc/resources/softwire.gdc.res.o"],
 	"lflags-windows-dmd": ["/SUBSYSTEM:WINDOWS"],
@@ -14,11 +16,5 @@
 	"copyFiles-windows": ["misc/dll/glfw3.dll", "misc/dll/freetype.dll"],
 	"copyFiles": ["misc/settings.json"],
 	"postBuildCommands-windows": ["xcopy data build\\data /S /E /I /Y"],
-	"postBuildCommands-linux": ["cp -R data/ build/"],
-	"dependencies":
-	{
-	  "derelict-glfw3" : "~master",
-	  "derelict-gl3" : "~master",
-	  "derelict-ft" : "~master",
-	}
+	"postBuildCommands-linux": ["cp -R data/ build/"]
 }
