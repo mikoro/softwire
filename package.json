@@ -7,8 +7,8 @@
 	"targetType": "executable",
 	"targetPath": "build",
 	"targetName": "softwire",
-	"sourceFiles-windows-dmd": ["misc/resources/softwire.res"],
-	"sourceFiles-windows-gdc": ["misc/resources/softwire.res.o"],
+	"sourceFiles-windows-dmd": ["misc/resources/softwire.dmd.res"],
+	"sourceFiles-windows-gdc": ["misc/resources/softwire.gdc.res.o"],
 	"lflags-windows-dmd": ["/SUBSYSTEM:WINDOWS"],
 	"dflags-windows-gdc": ["-mwindows"],
 	"copyFiles-windows": ["misc/dll/glfw3.dll", "misc/dll/freetype.dll"],
@@ -22,4 +22,3 @@
 	  "derelict-ft" : "~master",
 	}
 }
-
