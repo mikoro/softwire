@@ -101,7 +101,7 @@ class Game
 		}
 
 		foreach (i; 0 .. 1000)
-			rasterizer.drawCircle(framebuffer, 200, 200, 20, 0xffffffff);
+			rasterizer.drawCircle(framebuffer, 200, 200, 20, 0x7fffffff);
 
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "Render FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 32, "Physics FPS: " ~ physicsFpsCounter.getRateLimitedFps(), 0x7fffffff);

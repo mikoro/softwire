@@ -12,19 +12,12 @@ class Framebuffer
 
 	void clear()
 	{
-		framebufferData[] = 0;
+		data[] = 0;
 	}
 
-	@property uint[] data() { return framebufferData; }
-	@property int width() { return framebufferWidth; }
-	@property int height() { return framebufferHeight; }
-
-	private
-	{
-		uint[] framebufferData;
-		int framebufferWidth;
-		int framebufferHeight;
-	}
+	uint[] data;
+	int width;
+	int height;
 }
 
 class FramebufferOpenGL3 : Framebuffer
@@ -40,9 +33,9 @@ class FramebufferOpenGL3 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
-		framebufferWidth = settings.displayWidth / settings.framebufferScale;
-		framebufferHeight = settings.displayHeight / settings.framebufferScale;
-		framebufferData = new uint[framebufferWidth * framebufferHeight];
+		width = settings.displayWidth / settings.framebufferScale;
+		height = settings.displayHeight / settings.framebufferScale;
+		data = new uint[width * height];
 
 		logger.logInfo("Compiling shaders");
 
@@ -80,7 +73,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glGenSamplers(1, &samplerId);
@@ -116,7 +109,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebufferWidth, framebufferHeight, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, framebufferData.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data.ptr);
 		glBindSampler(0, samplerId);
 		glUniform1i(textureSamplerId, 0);
 
@@ -195,16 +188,16 @@ class FramebufferOpenGL1 : Framebuffer
 
 		logger.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
-		framebufferWidth = settings.displayWidth / settings.framebufferScale;
-		framebufferHeight = settings.displayHeight / settings.framebufferScale;
-		framebufferData = new uint[framebufferWidth * framebufferHeight];
+		width = settings.displayWidth / settings.framebufferScale;
+		height = settings.displayHeight / settings.framebufferScale;
+		data = new uint[width * height];
 
 		glEnable(GL_TEXTURE_2D);
 		glClearColor(1.0, 0.0, 0.0, 0.0);
 
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
 
 		if (settings.useLinearFiltering)
 		{
@@ -225,7 +218,7 @@ class FramebufferOpenGL1 : Framebuffer
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebufferWidth, framebufferHeight, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, framebufferData.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data.ptr);
 		
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  0.0);
