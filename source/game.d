@@ -129,7 +129,7 @@ class Game
 	}
 }
 
-extern(C) private
+extern(C) private nothrow
 {
 	void glfwFramebufferSizeCallback(GLFWwindow* window, int framebufferWidth, int framebufferHeight)
 	{

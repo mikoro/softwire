@@ -1,7 +1,7 @@
 import std.conv;
 import std.string;
 
-import derelict.freetype.ft;
+import freetype.freetype;
 
 import logger;
 import framebuffer;
@@ -11,13 +11,6 @@ class Text
 	this(Logger logger, string fontFileName, uint size)
 	{
 		this.logger = logger;
-
-		if (!isFreetypeLoaded)
-		{
-			logger.logInfo("Loading Freetype functions");
-			DerelictFT.load();
-			isFreetypeLoaded = true;
-		}
 
 		logger.logInfo("Loading font data from %s", fontFileName);
 
@@ -125,7 +118,5 @@ class Text
 
 		FT_Library library;
 		FT_Face face;
-
-		static bool isFreetypeLoaded;
 	}
 }

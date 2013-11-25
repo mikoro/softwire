@@ -25,7 +25,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 */
-module derelict.freetype.types;
+//module derelict.freetype.types;
+module freetype.types;
 
 private import core.stdc.config;
 
