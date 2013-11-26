@@ -1,3 +1,5 @@
 /.dub
 /build
+/obj
+/*sublime*
 Thumbs.db
