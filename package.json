@@ -6,13 +6,35 @@
 	"license": "Apache-2.0",
 	"targetType": "executable",
 	"targetPath": "build",
-	"targetName": "softwire",
 	"sourcePaths": ["source", "import"],
 	"importPaths": ["source", "import"],
 	"sourceFiles-windows-gdc": ["library/windows/glfw3.a", "library/windows/freetype.a", "misc/resources/softwire.res.o"],
-	"dflags-windows-gdc": ["-m32"],
+	"dflags-gdc": ["-m32"],
 	"lflags-windows-gdc": ["--subsystem=windows", "-lopengl32", "-lgdi32"],
 	"copyFiles": ["misc/settings.json"],
 	"postBuildCommands-windows": ["xcopy data build\\data /S /E /I /Y"],
-	"postBuildCommands-linux": ["cp -R data/ build/"]
+	"postBuildCommands-linux": ["cp -R data/ build/"],
+	"configurations":
+	[
+		{
+			"name": "debug-i386",
+			"targetName": "softwire-debug-i386",
+			"dflags-gdc": ["-march=i386"]
+		},
+		{
+			"name": "debug-core",
+			"targetName": "softwire-debug-core",
+			"dflags-gdc": ["-march=core-avx-i"]
+		},
+		{
+			"name": "release-i386",
+			"targetName": "softwire-release-i386",
+			"dflags-gdc": ["-march=i386", "-g"]
+		},
+		{
+			"name": "release-core",
+			"targetName": "softwire-release-core",
+			"dflags-gdc": ["-march=core-avx-i", "-g"]
+		}
+	]
 }
