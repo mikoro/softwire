@@ -10,6 +10,7 @@
 	"sourcePaths": ["source", "import"],
 	"importPaths": ["source", "import"],
 	"sourceFiles-windows-gdc": ["library/windows/glfw3.a", "library/windows/freetype.a", "misc/resources/softwire.res.o"],
+	"dflags-windows-gdc": ["-m32"],
 	"lflags-windows-gdc": ["--subsystem=windows", "-lopengl32", "-lgdi32"],
 	"copyFiles": ["misc/settings.json"],
 	"postBuildCommands-windows": ["xcopy data build\\data /S /E /I /Y"],
