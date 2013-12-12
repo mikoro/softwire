@@ -3,7 +3,6 @@ rwildcard = $(wildcard $1$2) $(foreach d, $(wildcard $1*), $(call rwildcard,$d/,
 SOURCES := $(call rwildcard, source/,*.d)
 IMPORTS := $(call rwildcard, import/,*.d)
 LIBRARIES = $(addprefix library/linux/, glfw3.a freetype.a)
-OBJECTS = 
 
 ARCH = i386
 #ARCH = core-avx-i
@@ -27,16 +26,16 @@ endif
 
 debug: pre-build
 	@echo Compiling debug build...
-	@gdc $(CFLAGS) -fdebug -funittest -g $(SOURCES) $(IMPORTS) $(OBJECTS) $(LIBRARIES) -o build/softwired $(LFLAGS)
+	@gdc $(CFLAGS) -fdebug -funittest -g $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwired $(LFLAGS)
 
 release: pre-build
 	@echo Compiling release build...
-	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 $(SOURCES) $(IMPORTS) $(OBJECTS) $(LIBRARIES) -o build/softwire $(LFLAGS)
+	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwire $(LFLAGS)
 	@strip -s build/softwire
 
 profile: pre-build
 	@echo Compiling profile build...
-	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 -g $(SOURCES) $(IMPORTS) $(OBJECTS) $(LIBRARIES) -o build/softwirep $(LFLAGS)
+	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 -g $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwirep $(LFLAGS)
 
 clean:
 	@echo Cleaning...
