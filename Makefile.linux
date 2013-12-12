@@ -1,21 +1,9 @@
-SOURCES = 	fpscounter.d \
-			framebuffer.d \
-			game.d \
-			logger.d \
-			main.d \
-			rasterizer.d \
-			settings.d \
-			text.d
+rwildcard = $(wildcard $1$2) $(foreach d, $(wildcard $1*), $(call rwildcard,$d/,$2))
 
-SOURCES := $(addprefix source/, $(SOURCES))
-
-IMPORTS = import/deimos/glfw/glfw3.d
-IMPORTS += $(addprefix import/derelict/util/, exception.d loader.d sharedlib.d system.d wintypes.d xtypes.d)
-IMPORTS += $(addprefix import/derelict/opengl3/, arb.d cgl.d constants.d deprecatedConstants.d deprecatedFunctions.d ext.d functions.d gl.d gl3.d glx.d glxext.d internal.d types.d wgl.d wglext.d)
-IMPORTS += $(addprefix import/freetype/, freetype.d types.d)
-
-OBJECTS = 
+SOURCES := $(call rwildcard, source/,*.d)
+IMPORTS := $(call rwildcard, import/,*.d)
 LIBRARIES = $(addprefix library/linux/, glfw3.a freetype.a)
+OBJECTS = 
 
 ARCH = i386
 #ARCH = core-avx-i
@@ -56,3 +44,5 @@ ifneq "$(wildcard build)" ""
 	@rm -rf build
 endif
 
+test:
+	@echo $(IMPORTS)
