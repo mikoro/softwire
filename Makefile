@@ -14,8 +14,8 @@ IMPORTS += $(addprefix import/derelict/util/, exception.d loader.d sharedlib.d s
 IMPORTS += $(addprefix import/derelict/opengl3/, arb.d cgl.d constants.d deprecatedConstants.d deprecatedFunctions.d ext.d functions.d gl.d gl3.d glx.d glxext.d internal.d types.d wgl.d wglext.d)
 IMPORTS += $(addprefix import/freetype/, freetype.d types.d)
 
-OBJECTS = misc\resources\softwire.res.o
-LIBRARIES = library\windows\glfw3.a library\windows\freetype.a
+OBJECTS = misc/resources/softwire.res.o
+LIBRARIES = $(addprefix library/windows/, glfw3.a freetype.a)
 
 ARCH = i386
 #ARCH = core-avx-i
