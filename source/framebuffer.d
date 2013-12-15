@@ -1,3 +1,15 @@
+/**
+ * Implements a framebuffer using OpenGL textured quads.
+ *
+ * Framebuffer is a byte array, each pixel taking four bytes in the ABGR format.
+ * 0,0 is the bottom left corner.
+ *
+ * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT License, see the LICENSE.txt file
+ */
+
+module framebuffer;
+
 import std.string;
 
 import derelict.opengl3.gl;

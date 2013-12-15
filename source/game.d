@@ -1,3 +1,12 @@
+/**
+ * Game initialization and mainloop logic.
+ *
+ * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT License, see the LICENSE.txt file
+ */
+
+module game;
+
 import std.c.stdlib;
 import std.conv;
 

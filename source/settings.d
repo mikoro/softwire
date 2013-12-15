@@ -1,3 +1,12 @@
+/**
+ * Implements settings reading from a configuration file.
+ *
+ * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT License, see the LICENSE.txt file
+ */
+
+module settings;
+
 import std.json;
 import std.file;
 
@@ -14,13 +23,13 @@ class Settings
 		json = parseJSON(readText(fileName));
 	}
 
-	@property uint displayWidth() { return cast(uint)json.object["display"].object["width"].uinteger; }
-	@property uint displayHeight() { return cast(uint)json.object["display"].object["height"].uinteger; }
-	@property bool isFullscreen() { return cast(bool)json.object["display"].object["fullscreen"].uinteger; }
-	@property bool vsyncEnabled() { return cast(bool)json.object["display"].object["vsync"].uinteger; }
-	@property uint framebufferScale() { return cast(uint)json.object["framebuffer"].object["scale"].uinteger; }
-	@property bool useLinearFiltering() { return cast(bool)json.object["framebuffer"].object["useLinearFiltering"].uinteger; }
-	@property bool useLegacyOpenGL() { return cast(bool)json.object["framebuffer"].object["useLegacyOpenGL"].uinteger; }
+	@property int displayWidth() { return cast(int)json.object["display"].object["width"].integer; }
+	@property int displayHeight() { return cast(int)json.object["display"].object["height"].integer; }
+	@property bool isFullscreen() { return cast(bool)json.object["display"].object["fullscreen"].integer; }
+	@property bool vsyncEnabled() { return cast(bool)json.object["display"].object["vsync"].integer; }
+	@property int framebufferScale() { return cast(int)json.object["framebuffer"].object["scale"].integer; }
+	@property bool useLinearFiltering() { return cast(bool)json.object["framebuffer"].object["useLinearFiltering"].integer; }
+	@property bool useLegacyOpenGL() { return cast(bool)json.object["framebuffer"].object["useLegacyOpenGL"].integer; }
  
 	private
 	{

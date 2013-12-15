@@ -1,3 +1,12 @@
+/**
+ * Implements text rendering with the Freetype library.
+ *
+ * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT License, see the LICENSE.txt file
+ */
+
+module text;
+
 import std.conv;
 import std.string;
 
@@ -95,7 +104,7 @@ class Text
 			foreach_reverse (i; 0 .. bitmap.rows)
 			{
 				foreach (j; 0 .. bitmap.width)
-					glyph.bitmap[i * bitmap.width + j] = ( bufferIndex[j] << 24) | 0xffffff;
+					glyph.bitmap[i * bitmap.width + j] = (bufferIndex[j] << 24) | 0x00ffffff;
 
 				bufferIndex += bitmap.pitch;
 			}

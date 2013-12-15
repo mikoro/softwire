@@ -1,3 +1,12 @@
+/**
+ * Implements rasterization algorithms for different primitives.
+ *
+ * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT License, see the LICENSE.txt file
+ */
+
+module rasterizer;
+
 import std.stdio;
 
 import framebuffer;
