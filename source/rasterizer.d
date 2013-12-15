@@ -74,9 +74,6 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, uint color)
 	if (fg[3] == 0)
 		return;
 
-	x += radius / 2;
-	y += radius / 2;
-
 	int clipLeft = 0;
 	int clipRight = 0;
 	int clipBottom = 0;
@@ -143,6 +140,3 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, uint color)
 		}
 	}
 }
-
-//double scale = 1.0 - cast(double)distance / squaredRadius;
-//uint alpha = cast(uint)(scale * 255.0 + 1);

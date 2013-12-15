@@ -15,6 +15,30 @@ class Framebuffer
 		data[] = 0;
 	}
 
+	void clear(uint color)
+	{
+		data[] = color;
+	}
+
+	void clear(uint startColor, uint endColor)
+	{
+		uint resultColor;
+		ubyte* c1 = cast(ubyte*)&startColor;
+		ubyte* c2 = cast(ubyte*)&endColor;
+		ubyte* c3 = cast(ubyte*)&resultColor;
+
+		foreach (y; 0 .. height)
+		{
+			double alpha = y / cast(double)height;
+			c3[0] = cast(ubyte)((c1[0] + (c2[0] - c1[0]) * alpha) + 0.5);
+			c3[1] = cast(ubyte)((c1[1] + (c2[1] - c1[1]) * alpha) + 0.5);
+			c3[2] = cast(ubyte)((c1[2] + (c2[2] - c1[2]) * alpha) + 0.5);
+			c3[3] = 0xff;
+
+			data[y * width .. y * width + width] = resultColor;
+		}
+	}
+
 	uint[] data;
 	int width;
 	int height;
