@@ -27,7 +27,7 @@ debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
 	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
 
 release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (release) 
+	@echo Linking executable (release)
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
 	@strip -s bin/softwire.exe
 

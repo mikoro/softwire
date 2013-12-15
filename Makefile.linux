@@ -23,32 +23,32 @@ default: release
 all: debug release profile
 
 debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
-	@echo Linking executable (debug)
+	@echo "Linking executable (debug)"
 	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired $(LFLAGS)
 
 release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (release) 
+	@echo "Linking executable (release)"
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire $(LFLAGS)
 	@strip -s bin/softwire
 
 profile: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (profile)
+	@echo "Linking executable (profile)"
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwirep $(LFLAGS)
 
 $(SOURCE_DEBUG_OBJECTS): obj/debug/%.o : source/%.d
-	@echo Compiling $(notdir $<) (debug)
+	@echo "Compiling $(notdir $<) (debug)"
 	@gdc -c $(CFLAGS_DEBUG) $< -o $@
 
 $(SOURCE_RELEASE_OBJECTS): obj/release/%.o : source/%.d
-	@echo Compiling $(notdir $<) (release)
+	@echo "Compiling $(notdir $<) (release)"
 	@gdc -c $(CFLAGS_RELEASE) $< -o $@
 
 $(IMPORT_DEBUG_OBJECT):
-	@echo Compiling import files (debug)
+	@echo "Compiling import files (debug)"
 	@gdc -c $(CFLAGS_DEBUG) $(IMPORT_FILES) -o $@
 	
 $(IMPORT_RELEASE_OBJECT):
-	@echo Compiling import files (release)
+	@echo "Compiling import files (release)"
 	@gdc -c $(CFLAGS_RELEASE) $(IMPORT_FILES) -o $@
 
 pre-build:
@@ -61,6 +61,6 @@ ifeq "$(wildcard bin)" ""
 endif
 
 clean:
-	@echo Cleaning
+	@echo "Cleaning"
 	@rm -rf bin
 	@rm -rf obj
