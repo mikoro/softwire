@@ -17,7 +17,7 @@ import deimos.glfw.glfw3;
 
 class FpsCounter
 {
-	this(double smoothingFactor = 0.05, double rateLimitFrequency = 10.0)
+	this(double smoothingFactor = 0.005, double rateLimitFrequency = 20.0)
 	{
 		this.smoothingFactor = smoothingFactor;
 		this.rateLimitInterval = 1.0 / rateLimitFrequency;
