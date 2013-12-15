@@ -1,74 +1,44 @@
-SOURCE_FILES := $(notdir $(wildcard source/*.d))
-SOURCE_OBJECTS := $(SOURCE_FILES:%.d=%.o)
-SOURCE_DEBUG_OBJECTS := $(addprefix obj/debug/, $(SOURCE_OBJECTS))
-SOURCE_RELEASE_OBJECTS := $(addprefix obj/release/, $(SOURCE_OBJECTS))
-
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
-IMPORT_FILES := $(call rwildcard, import/, *.d)
-IMPORT_DEBUG_OBJECT = obj/debug/imports.o
-IMPORT_RELEASE_OBJECT = obj/release/imports.o
+
+SOURCE_FILES := $(call rwildcard, source/, *.d)
+SOURCE_FILES += $(call rwildcard, import/, *.d)
 
 LIBRARIES = library/windows/glfw3.a library/windows/freetype.a
 RESOURCES = misc/resources/softwire.res.o
 
-CFLAGS = -m32 -march=i386 -Wall -Werror -Iimport -Isource
+CFLAGS = -m32 -march=i386 -Wall -Werror
 CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
 CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lopengl32 -lgdi32 -Xlinker --subsystem=windows
 
-.PHONY: default all debug release profile pre-build clean
+.PHONY: default all pre-build debug release profile clean
 
 default: release
 
 all: debug release profile
 
-debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
-	@echo Linking executable (debug)
-	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
-
-release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (release)
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
-	@strip -s bin/softwire.exe
-
-profile: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (profile)
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
-
-$(SOURCE_DEBUG_OBJECTS): obj/debug/%.o : source/%.d
-	@echo Compiling $(notdir $<) (debug)
-	@gdc -c $(CFLAGS_DEBUG) $< -o $@
-
-$(SOURCE_RELEASE_OBJECTS): obj/release/%.o : source/%.d
-	@echo Compiling $(notdir $<) (release)
-	@gdc -c $(CFLAGS_RELEASE) $< -o $@
-
-$(IMPORT_DEBUG_OBJECT):
-	@echo Compiling import files (debug)
-	@gdc -c $(CFLAGS_DEBUG) $(IMPORT_FILES) -o $@
-	
-$(IMPORT_RELEASE_OBJECT):
-	@echo Compiling import files (release)
-	@gdc -c $(CFLAGS_RELEASE) $(IMPORT_FILES) -o $@
-
 pre-build:
-ifeq "$(wildcard obj/debug)" ""
-	@mkdir obj\debug
-endif
-ifeq "$(wildcard obj/release)" ""
-	@mkdir obj\release
-endif
 ifeq "$(wildcard bin)" ""
 	@mkdir bin
 	@xcopy data bin\data /S /E /I /Y > nul
 	@xcopy misc\settings.json bin > nul
 endif
 
+debug: pre-build
+	@echo Building (debug)
+	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
+
+release: pre-build
+	@echo Building (release)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
+	@strip -s bin/softwire.exe
+
+profile: pre-build
+	@echo Building (profile)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
+
 clean:
 	@echo Cleaning
 ifneq "$(wildcard bin)" ""
 	@rmdir /S /Q bin
-endif
-ifneq "$(wildcard obj)" ""
-	@rmdir /S /Q obj
 endif
