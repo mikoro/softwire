@@ -16,11 +16,24 @@ CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
 CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lopengl32 -lgdi32 -Xlinker --subsystem=windows
 
-.PHONY: default all pre-build debug release profile clean
+.PHONY: default all debug release profile pre-build clean
 
 default: release
 
 all: debug release profile
+
+debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
+	@echo Linking executable (debug)
+	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
+
+release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
+	@echo Linking executable (release) 
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
+	@strip -s bin/softwire.exe
+
+profile: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
+	@echo Linking executable (profile)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
 
 $(SOURCE_DEBUG_OBJECTS): obj/debug/%.o : source/%.d
 	@echo Compiling $(notdir $<) (debug)
@@ -50,19 +63,6 @@ ifeq "$(wildcard bin)" ""
 	@xcopy data bin\data /S /E /I /Y > nul
 	@xcopy misc\settings.json bin > nul
 endif
-
-debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
-	@echo Linking executable (debug)
-	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
-
-release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (release) 
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
-	@strip -s bin/softwire.exe
-
-profile: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
-	@echo Linking executable (profile)
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
 
 clean:
 	@echo Cleaning

@@ -1,47 +1,66 @@
-rwildcard = $(wildcard $1$2) $(foreach d, $(wildcard $1*), $(call rwildcard,$d/,$2))
+SOURCE_FILES := $(notdir $(wildcard source/*.d))
+SOURCE_OBJECTS := $(SOURCE_FILES:%.d=%.o)
+SOURCE_DEBUG_OBJECTS := $(addprefix obj/debug/, $(SOURCE_OBJECTS))
+SOURCE_RELEASE_OBJECTS := $(addprefix obj/release/, $(SOURCE_OBJECTS))
 
-SOURCES := $(call rwildcard, source/,*.d)
-IMPORTS := $(call rwildcard, import/,*.d)
-LIBRARIES = $(addprefix library/linux/, glfw3.a freetype.a)
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
+IMPORT_FILES := $(call rwildcard, import/, *.d)
+IMPORT_DEBUG_OBJECT = obj/debug/imports.o
+IMPORT_RELEASE_OBJECT = obj/release/imports.o
 
-ARCH = i386
-#ARCH = core-avx-i
+LIBRARIES = library/linux/glfw3.a library/linux/freetype.a
+RESOURCES = 
 
-CFLAGS = -m32 -march=$(ARCH) -Wall -Werror
+CFLAGS = -m32 -march=i386 -Wall -Werror -Iimport -Isource
+CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
+CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lGL -lX11 -lXxf86vm -lXrandr -lXi -lpng -lbz2 -ldl
 
-.PHONY: default all pre-build debug release profile clean
+.PHONY: default all debug release profile pre-build clean
 
 default: release
 
 all: debug release profile
 
+debug: pre-build $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT)
+	@echo Linking executable (debug)
+	@gdc $(CFLAGS_DEBUG) $(SOURCE_DEBUG_OBJECTS) $(IMPORT_DEBUG_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwired $(LFLAGS)
+
+release: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
+	@echo Linking executable (release) 
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwire $(LFLAGS)
+	@strip -s bin/softwire
+
+profile: pre-build $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT)
+	@echo Linking executable (profile)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_RELEASE_OBJECTS) $(IMPORT_RELEASE_OBJECT) $(LIBRARIES) $(RESOURCES) -o bin/softwirep $(LFLAGS)
+
+$(SOURCE_DEBUG_OBJECTS): obj/debug/%.o : source/%.d
+	@echo Compiling $(notdir $<) (debug)
+	@gdc -c $(CFLAGS_DEBUG) $< -o $@
+
+$(SOURCE_RELEASE_OBJECTS): obj/release/%.o : source/%.d
+	@echo Compiling $(notdir $<) (release)
+	@gdc -c $(CFLAGS_RELEASE) $< -o $@
+
+$(IMPORT_DEBUG_OBJECT):
+	@echo Compiling import files (debug)
+	@gdc -c $(CFLAGS_DEBUG) $(IMPORT_FILES) -o $@
+	
+$(IMPORT_RELEASE_OBJECT):
+	@echo Compiling import files (release)
+	@gdc -c $(CFLAGS_RELEASE) $(IMPORT_FILES) -o $@
+
 pre-build:
-ifeq "$(wildcard build)" ""
-	@echo Creating a build directory and copying files...
-	@mkdir -p build
-	@cp -R data/ build/
-	@cp misc/settings.json build
+	@mkdir -p obj/debug
+	@mkdir -p obj/release
+ifeq "$(wildcard bin)" ""
+	@mkdir -p bin
+	@cp -R data/ bin/
+	@cp misc/settings.json bin
 endif
-
-debug: pre-build
-	@echo Compiling debug build...
-	@gdc $(CFLAGS) -fdebug -funittest -g $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwired $(LFLAGS)
-
-release: pre-build
-	@echo Compiling release build...
-	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwire $(LFLAGS)
-	@strip -s build/softwire
-
-profile: pre-build
-	@echo Compiling profile build...
-	@gdc $(CFLAGS) -frelease -fno-bounds-check -O3 -g $(SOURCES) $(IMPORTS) $(LIBRARIES) -o build/softwirep $(LFLAGS)
 
 clean:
-	@echo Cleaning...
-ifneq "$(wildcard build)" ""
-	@rm -rf build
-endif
-
-test:
-	@echo $(IMPORTS)
+	@echo Cleaning
+	@rm -rf bin
+	@rm -rf obj
