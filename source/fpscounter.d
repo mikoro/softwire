@@ -5,7 +5,7 @@
  * Also provides rate limited updates so that the visible result only updates X times per seconds.
  *
  * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License, see the LICENSE.txt file
+ * License: MIT License
  */
 
 module fpscounter;

@@ -2,7 +2,7 @@
  * Implements text rendering with the Freetype library.
  *
  * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License, see the LICENSE.txt file
+ * License: MIT License
  */
 
 module text;
