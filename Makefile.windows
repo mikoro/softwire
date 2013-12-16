@@ -4,7 +4,7 @@ SOURCE_FILES := $(call rwildcard, source/, *.d)
 SOURCE_FILES += $(call rwildcard, import/, *.d)
 
 LIBRARIES = library/glfw/windows/glfw3.a library/freetype/windows/freetype.a
-RESOURCES = misc/resources/softwire.res.o
+RESOURCES = misc/windows/softwire.res.o
 
 CFLAGS = -m32 -march=i386 -Wall -Werror
 CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
@@ -21,7 +21,7 @@ pre-build:
 ifeq "$(wildcard bin)" ""
 	@mkdir bin
 	@xcopy data bin\data /S /E /I /Y > nul
-	@xcopy misc\settings.json bin > nul
+	@xcopy misc\softwire.conf bin > nul
 endif
 
 debug: pre-build
@@ -36,7 +36,13 @@ release: pre-build
 profile: pre-build
 	@echo Building (profile)
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
-
+	
+dist: clean release
+	@xcopy /S /E /I /Y bin softwire
+	@pandoc -f markdown_github -t html5 -o softwire\readme.html --template=misc\pandoc\html5.template README.md
+	@"C:\Program Files\7-Zip\7z.exe" a -tzip -mx9 softwire-windows.zip softwire
+	@rmdir /S /Q softwire
+	
 clean:
 	@echo Cleaning
 ifneq "$(wildcard bin)" ""
