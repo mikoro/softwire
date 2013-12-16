@@ -446,3 +446,4 @@ if (GLFW_INSTALL)
     endif()
 endif()
 
+set_target_properties(glfw PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
