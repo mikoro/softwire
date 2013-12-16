@@ -3,7 +3,7 @@ rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst
 SOURCE_FILES := $(call rwildcard, source/, *.d)
 SOURCE_FILES += $(call rwildcard, import/, *.d)
 
-LIBRARIES = library/windows/glfw3.a library/windows/freetype.a
+LIBRARIES = library/glfw/windows/glfw3.a library/freetype/windows/freetype.a
 RESOURCES = misc/resources/softwire.res.o
 
 CFLAGS = -m32 -march=i386 -Wall -Werror
