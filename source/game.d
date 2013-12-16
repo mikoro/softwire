@@ -25,7 +25,7 @@ class Game
 	this(Logger logger)
 	{
 		this.logger = logger;
-		settings = new Settings(logger, "settings.json");
+		settings = new Settings(logger, "softwire.conf");
 
 		glfwSetErrorCallback(&glfwErrorCallback);
 
