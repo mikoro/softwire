@@ -81,16 +81,33 @@ Extract the source code and replace the *CMakeLists.txt* at the root directory w
 mkdir build
 cd build
 cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=relwithdebinfo ..
+mingw32-make
+*or*
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=relwithdebinfo ..
-mingw32-make VERBOSE=1
-make VERBOSE=1
+make
 ```
 
-Copy the resulting *src/libglfw3.a* to *library/glfw/platform/*.
+Copy the resulting *src/libglfw3.a* to *library/glfw/platform/glfw3.a*.
 
 ### Freetype
 
-Need to statically compile glfw and freetype.
+The version used is **2.5.2**. Download the [source code](http://sourceforge.net/projects/freetype/files/freetype2/).
+
+Extract the source code and replace the *modules.cfg* at the root directory with one from *library/freetype/config/*.
+
+Add *-m32* flag to *CFLAGS* in *builds/compiler/gcc.mk*.
+
+```
+mingw32-make
+mingw32-make
+*or*
+make
+make
+```
+
+If the Windows build with MinGW fails, duplicate the *builds/windows* directory as *builds/win32*.
+
+Copy the resulting *objs/freetype.a* to *library/freetype/platform/freetype.a*.
 
 ## License
 
