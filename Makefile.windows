@@ -1,7 +1,7 @@
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
 SOURCE_FILES := $(call rwildcard, source/, *.d)
-SOURCE_FILES += $(call rwildcard, import/, *.d)
+IMPORT_FILES := $(call rwildcard, import/, *.d)
 
 LIBRARIES = library/glfw/windows/glfw3.a library/freetype/windows/freetype.a
 RESOURCES = misc/windows/softwire.res.o
@@ -11,7 +11,7 @@ CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
 CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lopengl32 -lgdi32 -Xlinker --subsystem=windows
 
-.PHONY: default all pre-build debug release profile clean
+.PHONY: default all pre-build debug release profile doc dist clean
 
 default: release
 
@@ -26,16 +26,22 @@ endif
 
 debug: pre-build
 	@echo Building (debug)
-	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
+	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
 
 release: pre-build
 	@echo Building (release)
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
 	@strip -s bin/softwire.exe
 
 profile: pre-build
 	@echo Building (profile)
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
+	
+doc:
+ifeq "$(wildcard doc)" ""
+	@mkdir doc
+endif
+	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/temp.o
 	
 dist: clean release
 	@xcopy /S /E /I /Y bin softwire
@@ -47,4 +53,10 @@ clean:
 	@echo Cleaning
 ifneq "$(wildcard bin)" ""
 	@rmdir /S /Q bin
+endif
+ifneq "$(wildcard doc)" ""
+	@rmdir /S /Q doc
+endif
+ifneq "$(wildcard softwire)" ""
+	@rmdir /S /Q softwire
 endif
