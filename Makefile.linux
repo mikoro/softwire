@@ -39,22 +39,21 @@ release: pre-build
 profile: pre-build
 	@echo "Building profile version"
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep $(LFLAGS)
-	
+
 doc:
 	@echo "Building documentation"
 	@mkdir -p doc
 	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/doc.o
-	
+
 dist: clean release
 	@echo "Building distribution"
 	@cp -R bin softwire-$(VERSION)
-#	@pandoc -f markdown_github -t html5 -o softwire/readme.html --template=misc/pandoc/html5.template README.md
+#	@pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
 	@7z a -tzip -mx9 softwire-linux-$(VERSION).zip softwire-$(VERSION)
 	@rm -rf softwire-$(VERSION)
-	
+
 clean:
 	@echo "Cleaning all"
 	@rm -rf bin
 	@rm -rf doc
 	@rm -f *.zip
-

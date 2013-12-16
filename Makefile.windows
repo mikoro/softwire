@@ -11,6 +11,8 @@ CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
 CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lopengl32 -lgdi32 -Xlinker --subsystem=windows
 
+VERSION = $(shell type VERSION)
+
 .PHONY: default all pre-build debug release profile doc dist clean
 
 default: release
@@ -19,46 +21,47 @@ all: debug release profile
 
 pre-build:
 ifeq "$(wildcard bin)" ""
+	@echo Preparing bin directory
 	@mkdir bin
 	@xcopy data bin\data /S /E /I /Y > nul
 	@xcopy misc\softwire.conf bin > nul
 endif
 
 debug: pre-build
-	@echo Building (debug)
+	@echo Building debug version
 	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired.exe $(LFLAGS)
 
 release: pre-build
-	@echo Building (release)
+	@echo Building release version
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire.exe $(LFLAGS)
 	@strip -s bin/softwire.exe
 
 profile: pre-build
-	@echo Building (profile)
+	@echo Building profile version
 	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep.exe $(LFLAGS)
-	
+
 doc:
+	@echo Building documentation
 ifeq "$(wildcard doc)" ""
 	@mkdir doc
 endif
 	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/doc.o
-	
+
 dist: clean release
-	@xcopy /S /E /I /Y bin softwire
-	@pandoc -f markdown_github -t html5 -o softwire/readme.html --template=misc/pandoc/html5.template README.md
-	@"C:\Program Files\7-Zip\7z.exe" a -tzip -mx9 softwire-windows.zip softwire
-	@rmdir /S /Q softwire
-	
+	@echo Building distribution
+	@xcopy /S /E /I /Y bin softwire-$(VERSION)
+	@pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
+	@"C:\Program Files\7-Zip\7z.exe" a -tzip -mx9 softwire-windows-$(VERSION).zip softwire-$(VERSION)
+	@rmdir /S /Q softwire-$(VERSION)
+
 clean:
-	@echo Cleaning
+	@echo Cleaning all
 ifneq "$(wildcard bin)" ""
 	@rmdir /S /Q bin
 endif
 ifneq "$(wildcard doc)" ""
 	@rmdir /S /Q doc
 endif
-ifneq "$(wildcard softwire)" ""
-	@rmdir /S /Q softwire
+ifneq "$(wildcard *.zip)" ""
+	@del *.zip
 endif
-	@rm *.zip
-
