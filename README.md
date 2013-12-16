@@ -42,27 +42,37 @@ Do this and do that.
 
 ### Windows
 
-On windows, you need MinGW32 and GDC.
+[GDC compiler](http://gdcproject.org/wiki/) needs to be installed &mdash; easiest way to do it is to use the [MinGW-GDC build script](https://github.com/venix1/MinGW-GDC). Put both the resulting GDC and MinGW-w64 (that is installed and used by the script) bin directories into your PATH. You need to use the MinGW installed by the build script, not the one you might have had installed earlier. This has only been tested on Windows 8.1 64-bit.
+
+Then build the program with make:
 
 ```
-make -f Makefile.windows release
+mingw32-make -f Makefile.windows
 ```
+
+The executable and other necessary files will be output to the **bin** directory.
 
 ### Linux
 
-On Linux, you need GDC.
+Install the GDC compiler (and possible D standard/runtime libraries) using your package manager of choice. Building has only been tested on Arch Linux 32-bit.
+
+Compile the program with make:
 
 ```
-make -f Makefile.linux release
+make -f Makefile.linux
 ```
+
+The executable and other necessary files will be output to the **bin** directory.
 
 ## Compiling external libraries
 
-All the external libraries have been statically compiled and linked to the executable. Here are brief instructions on how to do the compilations.
+All the external libraries should be compiled to static libraries (release mode + debug info) and then put into the *library/platform* directory. On Windows, remember to use the MinGW installed and used by the MinGW-GDC build script to ensure binary compatability.
 
 ### GLFW
 
-Need to statically compile glfw and freetype.
+The version used is **3.0.3**. Download the [source code](http://sourceforge.net/projects/glfw/files/glfw/). You also have to install  [CMake](http://www.cmake.org/).
+
+
 
 ### Freetype
 
