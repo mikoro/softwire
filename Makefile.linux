@@ -1,9 +1,9 @@
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
 SOURCE_FILES := $(call rwildcard, source/, *.d)
-SOURCE_FILES += $(call rwildcard, import/, *.d)
+IMPORT_FILES := $(call rwildcard, import/, *.d)
 
-LIBRARIES = library/linux/glfw3.a library/linux/freetype.a
+LIBRARIES = library/glfw/linux/glfw3.a library/freetype/linux/freetype.a
 RESOURCES = 
 
 CFLAGS = -m32 -march=i386 -Wall -Werror
@@ -11,7 +11,7 @@ CFLAGS_DEBUG = $(CFLAGS) -fdebug -funittest -g
 CFLAGS_RELEASE = $(CFLAGS) -frelease -fno-bounds-check -O3 -g
 LFLAGS = -lGL -lX11 -lXxf86vm -lXrandr -lXi -lpng -lbz2 -ldl
 
-.PHONY: default all pre-build debug release profile clean
+.PHONY: default all pre-build debug release profile doc dist clean
 
 default: release
 
@@ -21,22 +21,36 @@ pre-build:
 ifeq "$(wildcard bin)" ""
 	@mkdir -p bin
 	@cp -R data/ bin/
-	@cp misc/settings.json bin
+	@cp misc/softwire.conf bin
 endif
 
 debug: pre-build
 	@echo "Building (debug)"
-	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired $(LFLAGS)
+	@gdc $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwired $(LFLAGS)
 
 release: pre-build
 	@echo "Building (release)"
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire $(LFLAGS)
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwire $(LFLAGS)
 	@strip -s bin/softwire
 
 profile: pre-build
 	@echo "Building (profile)"
-	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep $(LFLAGS)
-
+	@gdc $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/softwirep $(LFLAGS)
+	
+doc:
+	@mkdir -p doc
+	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/doc.o
+	
+dist: clean release
+	@cp -R bin softwire
+#	@pandoc -f markdown_github -t html5 -o softwire/readme.html --template=misc/pandoc/html5.template README.md
+	@7z a -tzip -mx9 softwire-linux.zip softwire
+	@rm -rf softwire
+	
 clean:
 	@echo "Cleaning"
 	@rm -rf bin
+	@rm -rf doc
+	@rm -rf softwire
+	@rm *.zip
+

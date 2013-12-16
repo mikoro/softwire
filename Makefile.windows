@@ -41,11 +41,11 @@ doc:
 ifeq "$(wildcard doc)" ""
 	@mkdir doc
 endif
-	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/temp.o
+	@gdc -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/doc.o
 	
 dist: clean release
 	@xcopy /S /E /I /Y bin softwire
-	@pandoc -f markdown_github -t html5 -o softwire\readme.html --template=misc\pandoc\html5.template README.md
+	@pandoc -f markdown_github -t html5 -o softwire/readme.html --template=misc/pandoc/html5.template README.md
 	@"C:\Program Files\7-Zip\7z.exe" a -tzip -mx9 softwire-windows.zip softwire
 	@rmdir /S /Q softwire
 	
@@ -60,3 +60,5 @@ endif
 ifneq "$(wildcard softwire)" ""
 	@rmdir /S /Q softwire
 endif
+	@rm *.zip
+
