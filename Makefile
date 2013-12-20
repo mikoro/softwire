@@ -13,13 +13,13 @@ ifndef 64BIT
 	CFLAGS = -m32 -mcpu=i686 -mattr=sse2
 else
 	BITNESS = 64
-	CFLAGS = -m64 -mcpu=x86_64 -mattr=avx
+	CFLAGS = -m64 -mcpu=x86-64 -mattr=avx
 endif
 
 CFLAGS += -w -de -od=obj -singleobj
-CFLAGS_DEBUG := $(CFLAGS) -g
-CFLAGS_RELEASE := $(CFLAGS) -O5 -release -L-s
-CFLAGS_PROFILE := $(CFLAGS) -O5 -release -g
+CFLAGS_DEBUG := $(CFLAGS) -g -unittest
+CFLAGS_RELEASE := $(CFLAGS) -O3 -release -L-s
+CFLAGS_PROFILE := $(CFLAGS) -O3 -release -g
 
 UNAME := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
@@ -46,52 +46,47 @@ endif
 LIBRARIES = library/glfw/$(PLATFORM)/libglfw$(BITNESS).a \
 			library/freetype/$(PLATFORM)/libfreetype$(BITNESS).a
 
-DEBUG_EXE := softwired$(BITNESS)
-RELEASE_EXE := softwire$(BITNESS)
-PROFILE_EXE := softwirep$(BITNESS)
-
 VERSION := $(shell cat VERSION)
 
 .PHONY: default all pre-build debug release profile doc dist clean
-.SILENT: pre-build debug release profile doc dist clean
 
 default: release
 
 all: debug release profile
 
 pre-build:
-	echo "Target is $(PLATFORM) $(BITNESS)-bit"
+	@echo "Target is $(PLATFORM) $(BITNESS)-bit"
 ifeq "$(wildcard bin)" ""
-	echo "Preparing bin directory..."
+	@echo "Preparing bin directory..."
 	mkdir -p bin
 	cp -R data bin
 	cp misc/softwire.conf bin
 endif
 
 debug: pre-build
-	echo "Compiling debug version..."
-	ldc2 $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/$(DEBUG_EXE) $(LFLAGS)
+	@echo "Compiling debug version..."
+	ldc2 $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwired$(BITNESS) $(LFLAGS)
 
 release: pre-build
-	echo "Compiling release version..."
-	ldc2 $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/$(RELEASE_EXE) $(LFLAGS)
+	@echo "Compiling release version..."
+	ldc2 $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwire$(BITNESS) $(LFLAGS)
 
 profile: pre-build
-	echo "Compiling profile version..."
-	ldc2 $(CFLAGS_PROFILE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -o bin/$(PROFILE_EXE) $(LFLAGS)
+	@echo "Compiling profile version..."
+	ldc2 $(CFLAGS_PROFILE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwirep$(BITNESS) $(LFLAGS)
 
 doc:
-	echo "Creating documentation..."
+	@echo "Creating documentation..."
 	mkdir -p doc
-	ldc2 -c $(SOURCE_FILES) -fdoc -fdoc-dir=doc -Iimport -Isource -o doc/doc.o
+	ldc2 $(SOURCE_FILES) -D -Dd=doc -Iimport -o-
 
 dist:
-	echo "Building distribution..."
+	@echo "Building distribution..."
 	cp -R bin softwire-$(VERSION)
 	pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
 	7z a -tzip -mx9 softwire-$(PLATFORM)-$(VERSION).zip softwire-$(VERSION)
 	rm -rf softwire-$(VERSION)
 
 clean:
-	echo "Cleaning all..."
+	@echo "Cleaning all..."
 	rm -rf bin doc obj *.zip
