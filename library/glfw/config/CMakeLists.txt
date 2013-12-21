@@ -446,7 +446,6 @@ if (GLFW_INSTALL)
     endif()
 endif()
 
-set_target_properties(glfw PROPERTIES COMPILE_FLAGS "-m32 -g -march=pentium4 -mtune=generic -mfpmath=sse" LINK_FLAGS "-m32 -g -march=pentium4 -mtune=generic -mfpmath=sse")
+set_target_properties(glfw PROPERTIES COMPILE_FLAGS "-m32 -g -march=pentium4 -mtune=generic -msse2 -mfpmath=sse" LINK_FLAGS "-m32 -g -march=pentium4 -mtune=generic -msse2 -mfpmath=sse")
 #set_target_properties(glfw PROPERTIES COMPILE_FLAGS "-m64 -g -march=x86-64 -mtune=generic" LINK_FLAGS "-m64 -g -march=x86-64 -mtune=generic")
-#cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=release ..
-#cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=release ..
+#cmake -G "XXX Makefiles" -DCMAKE_BUILD_TYPE=release ..

@@ -10,16 +10,24 @@ IMPORT_FILES := $(call rwildcard, import/, *.d)
 
 ifndef 64BIT
 	BITNESS = 32
-	CFLAGS = -m32 -mcpu=i686 -mattr=sse2
+	ifndef NATIVE
+		CFLAGS = -m32 -mcpu=i686 -mattr=sse2
+	else
+		CFLAGS = -m32 -mcpu=native
+	endif
 else
 	BITNESS = 64
-	CFLAGS = -m64 -mcpu=x86-64 -mattr=avx
+	ifndef NATIVE
+		CFLAGS = -m64 -mcpu=x86-64
+	else
+		CFLAGS = -m64 -mcpu=native
+	endif
 endif
 
 CFLAGS += -w -de -od=obj -singleobj
-CFLAGS_DEBUG := $(CFLAGS) -g -unittest
-CFLAGS_RELEASE := $(CFLAGS) -O3 -release -L-s
-CFLAGS_PROFILE := $(CFLAGS) -O3 -release -g
+CFLAGS_DEBUG := $(CFLAGS) -d-debug -unittest -g
+CFLAGS_RELEASE := $(CFLAGS) -release -O3 -L-s
+CFLAGS_PROFILE := $(CFLAGS) -release -O3 -g
 
 UNAME := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 

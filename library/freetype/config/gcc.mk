@@ -61,7 +61,7 @@ T := -o$(space)
 #   Use the ANSIFLAGS variable to define the compiler flags used to enfore
 #   ANSI compliance.
 #
-CFLAGS ?= -c -g -O3 -m32 -march=pentium4 -mtune=generic -mfpmath=sse
+CFLAGS ?= -c -g -O3 -m32 -march=pentium4 -mtune=generic -msse2 -mfpmath=sse
 #CFLAGS ?= -c -g -O3 -m64 -march=x86-64 -mtune=generic
 
 # ANSIFLAGS: Put there the flags used to make your compiler ANSI-compliant.
