@@ -1,0 +1,10 @@
+2.5.2
+http://download.savannah.gnu.org/releases/freetype/freetype-2.5.2.tar.gz
+
+linux:
+copy modules.cfg -> /
+make
+copy unix-cc.mk -> /builds/unix
+modify unix-cc.mk (CFLAGS/LDFLAGS 32/64 bit)
+make
+copy objs/.libs/libfreetype.a -> library/freetype/linux/libfreetype(32|64).a

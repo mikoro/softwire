@@ -1,0 +1,10 @@
+3.0.3
+http://sourceforge.net/projects/glfw/files/glfw/3.0.3/glfw-3.0.3.zip/download
+
+linux:
+copy CMakeLists.txt -> /
+modify CMakeLists.txt (CFLAGS/LDFLAGS 32/64 bit)
+mkdir build && cd build
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=release ..
+make VERBOSE=1
+copy build/src/libglfw3.a -> library/glfw/linux/libglfw(32|64).a

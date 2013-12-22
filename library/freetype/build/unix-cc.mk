@@ -79,7 +79,7 @@ T := -o$(space)
 #   We use our own FreeType configuration file.
 #
 CPPFLAGS := 
-CFLAGS   := -c -g -O3 -m32 -march=pentium4 -mtune=generic -mfpmath=sse -DFT_CONFIG_OPTION_SYSTEM_ZLIB -DFT_CONFIG_OPTION_USE_BZIP2 -I/usr/include/libpng16 -DFT_CONFIG_OPTION_USE_PNG -DFT_CONFIG_CONFIG_H="<ftconfig.h>"
+CFLAGS   := -c -g -O3 -m32 -march=pentium4 -mtune=generic -msse2 -mfpmath=sse -DFT_CONFIG_OPTION_SYSTEM_ZLIB -DFT_CONFIG_OPTION_USE_BZIP2 -I/usr/include/libpng16 -DFT_CONFIG_OPTION_USE_PNG -DFT_CONFIG_CONFIG_H="<ftconfig.h>"
 #CFLAGS   := -c -g -O3 -m64 -march=x86-64 -mtune=generic -DFT_CONFIG_OPTION_SYSTEM_ZLIB -DFT_CONFIG_OPTION_USE_BZIP2 -I/usr/include/libpng16 -DFT_CONFIG_OPTION_USE_PNG -DFT_CONFIG_CONFIG_H="<ftconfig.h>"
 
 # ANSIFLAGS: Put there the flags used to make your compiler ANSI-compliant.
@@ -94,8 +94,7 @@ CC    := $(LIBTOOL) --mode=compile $(CCraw)
 
 # Linker flags.
 #
-LDFLAGS :=  -lz -lbz2 -L/usr/lib -lpng16
-
+LDFLAGS :=  -lz -lbz2 -L/usr/lib -lpng16 $(CFLAGS)
 
 # export symbols
 #

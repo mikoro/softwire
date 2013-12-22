@@ -95,9 +95,9 @@ class Text
 			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
-			glyph.adjustX = face.glyph.metrics.horiBearingX >> 6;
-			glyph.adjustY = (face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6;
-			glyph.advanceX = face.glyph.metrics.horiAdvance >> 6;
+			glyph.adjustX = cast(int)(face.glyph.metrics.horiBearingX >> 6);
+			glyph.adjustY = cast(int)((face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6);
+			glyph.advanceX = cast(int)(face.glyph.metrics.horiAdvance >> 6);
 
 			const(ubyte)* bufferIndex = bitmap.buffer;
 
@@ -115,11 +115,11 @@ class Text
 		struct Glyph
 		{
 			uint[] bitmap;
-			uint bitmapWidth;
-			uint bitmapHeight;
-			uint adjustX;
-			uint adjustY;
-			uint advanceX;
+			int bitmapWidth;
+			int bitmapHeight;
+			int adjustX;
+			int adjustY;
+			int advanceX;
 		}
 
 		Logger logger;
