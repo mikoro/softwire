@@ -44,7 +44,7 @@ endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
 	RESOURCES = 
-	LFLAGS = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi -L-lpng -L-ldl
+	LFLAGS = 
 endif
 
 ifndef PLATFORM
