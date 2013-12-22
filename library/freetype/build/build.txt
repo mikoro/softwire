@@ -3,7 +3,9 @@ http://download.savannah.gnu.org/releases/freetype/freetype-2.5.2.tar.gz
 
 linux:
 copy modules.cfg -> /
+copy ftoption.h -> include/config
 make
+cd builds/unix && ./configure --without-zlib --without-bzip2 --without-png && cd ../..
 copy unix-cc.mk -> /builds/unix
 modify unix-cc.mk (CFLAGS/LDFLAGS 32/64 bit)
 make

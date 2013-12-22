@@ -39,7 +39,7 @@ endif
 ifneq "$(findstring linux,$(UNAME))" ""
 	PLATFORM = linux
 	RESOURCES = 
-	LFLAGS = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi -L-lpng -L-ldl
+	LFLAGS = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi
 endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
