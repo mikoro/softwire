@@ -1,7 +1,9 @@
 # Makefile for compiling Softwire
-# Needs LDC compiler
+# Uses the LDC compiler (http://wiki.dlang.org/LDC)
 # Automatically detects platforms: Windows, Linux or Mac (on Windows, needs to be run from MinGW MSYS)
-# Define 64BIT=1 on the command line to enable 64-bit build
+# Define 64BIT=1 on the command line to enable 64-bit build (not supported on Windows at the moment)
+# Define NATIVE=1 on the command line to build native executables
+# Mac linking doesn't work at the moment, use the commands at the bottom
 
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
@@ -90,11 +92,27 @@ doc:
 
 dist:
 	@echo "Building distribution..."
-	cp -R bin softwire-$(VERSION)
-	pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
-	7z a -tzip -mx9 softwire-$(PLATFORM)-$(VERSION).zip softwire-$(VERSION)
-	rm -rf softwire-$(VERSION)
+ifeq "$(PLATFORM)" "windows"
+	#cp -R bin softwire-$(VERSION)
+	#pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
+	#7z a -tzip -mx9 softwire-$(PLATFORM)-$(VERSION).zip softwire-$(VERSION)
+	#rm -rf softwire-$(VERSION)
+endif
+ifeq "$(PLATFORM)" "linux"
+endif
+ifeq "$(PLATFORM)" "mac"
+	mkdir -p Softwire.app Softwire.app/Contents Softwire.app/Contents/MacOS Softwire.app/Contents/Resources
+	cp misc/mac/Info.plist Softwire.app/Contents
+	cp misc/mac/softwire.icns Softwire.app/Contents/Resources
+	cp -R data Softwire.app/Contents/Resources
+	cp misc/softwire.conf Softwire.app/Contents/Resources
+	lipo -create -output Softwire.app/Contents/MacOS/softwire bin/softwire32 bin/softwire64
+endif
 
 clean:
 	@echo "Cleaning all..."
 	rm -rf bin doc obj *.zip
+
+# Mac release linking commands:
+# gcc -m32 -o bin/softwire32 obj/softwire32.o library/glfw/mac/libglfw32.a library/freetype/mac/libfreetype32.a -L/Users/mikoro/ldc/bin/../lib -lphobos-ldc -framework Cocoa -framework OpenGL -framework IOKit
+# gcc -m64 -o bin/softwire64 obj/softwire64.o library/glfw/mac/libglfw64.a library/freetype/mac/libfreetype64.a -L/Users/mikoro/ldc/bin/../lib -lphobos-ldc -framework Cocoa -framework OpenGL -framework IOKit

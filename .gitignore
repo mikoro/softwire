@@ -1,5 +1,6 @@
 /bin
 /obj
+/*.app
 /*.html
 /*sublime*
 /*.zip
