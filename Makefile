@@ -99,8 +99,10 @@ dist:
 	@echo "Building distribution..."
 	mkdir -p $(DISTDIR) $(DISTDATADIR)
 ifeq "$(PLATFORM)" "windows"
+	cp bin/softwire{32,64}.exe $(DISTDIR)
 endif
 ifeq "$(PLATFORM)" "linux"
+	cp bin/softwire{32,64} $(DISTDIR)
 endif
 ifeq "$(PLATFORM)" "mac"
 	mkdir -p Softwire.app/Contents/MacOS
@@ -110,10 +112,11 @@ ifeq "$(PLATFORM)" "mac"
 endif
 	cp -R data $(DISTDATADIR)
 	cp misc/softwire.conf $(DISTDATADIR)
-	cp LICENSE $(DISTDATADIR)/License.txt
+	cp LICENSE $(DISTDATADIR)/license.txt
 	pandoc -f markdown_github -t html5 -o $(DISTDATADIR)/readme.html --template=misc/pandoc/html5.template README.md
 	7z a -tzip -mx9 -xr!.DS_Store softwire-$(PLATFORM)-$(VERSION).zip $(DISTDIR)
 	rm -rf $(DISTDIR)
+
 clean:
 	@echo "Cleaning all..."
 	rm -rf bin doc obj *.zip
