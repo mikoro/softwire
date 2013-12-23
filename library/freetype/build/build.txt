@@ -1,12 +1,18 @@
 2.5.2
 http://download.savannah.gnu.org/releases/freetype/freetype-2.5.2.tar.gz
+http://download.savannah.gnu.org/releases/freetype/ft252.zip (windows, issues with the tar format)
 
-linux:
+Windows:
+Do not use MSYS, use CMD and mingw32-make
+Duplicate builds/windows as builds/win32 (hack)
+Only 32 bit supported with MinGW, use one recommended to be used with the LDC
+
 copy modules.cfg -> /
 copy ftoption.h -> include/config
-make
-cd builds/unix && ./configure --without-zlib --without-bzip2 --without-png && cd ../..
-copy unix-cc.mk -> /builds/unix
-modify unix-cc.mk (CFLAGS/LDFLAGS 32/64 bit)
-make
-copy objs/.libs/libfreetype.a -> library/freetype/linux/libfreetype(32|64).a
+make / mingw32-make
+linux cd builds/unix && ./configure --without-zlib --without-bzip2 --without-png && cd ../..
+linux copy unix-cc.mk -> builds/unix
+windows copy gcc.mk -> builds/compiler
+modify unix-cc.mk/gcc.mk (CFLAGS/LDFLAGS 32/64 bit)
+make / mingw32-make
+copy objs/.libs/libfreetype.a (objs/freetype.a) -> library/freetype/xxx/libfreetype(32|64).a
