@@ -7,7 +7,6 @@
 
 module game;
 
-import std.c.stdlib;
 import std.conv;
 
 import deimos.glfw.glfw3;
@@ -26,13 +25,6 @@ class Game
 	{
 		this.logger = logger;
 		settings = new Settings(logger, "softwire.conf");
-
-		glfwSetErrorCallback(&glfwErrorCallback);
-
-		logger.logInfo("Initializing GLFW");
-
-		if (!glfwInit())
-			throw new Exception("Could not initialize GLFW");
 
 		logger.logInfo("Creating the window");
 
@@ -138,18 +130,6 @@ extern(C) private nothrow
 	void glfwFramebufferSizeCallback(GLFWwindow* window, int framebufferWidth, int framebufferHeight)
 	{
 		glViewport(0, 0, framebufferWidth, framebufferHeight);
-	}
-
-	void glfwErrorCallback(int error, const(char)* description)
-	{
-		try
-		{
-			Game.logger.logError("GLFW: %s", to!string(description));
-		}
-		catch(Throwable t)
-		{
-			exit(-1);
-		}
 	}
 
 	void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
