@@ -81,6 +81,7 @@ T := -o$(space)
 CPPFLAGS := 
 CFLAGS   := -c -g -O3 -m32 -march=pentium4 -mtune=generic -msse2 -mfpmath=sse -DFT_CONFIG_CONFIG_H="<ftconfig.h>"
 #CFLAGS   := -c -g -O3 -m64 -march=x86-64 -mtune=generic -DFT_CONFIG_CONFIG_H="<ftconfig.h>"
+# MAC: add -DDARWIN_NO_CARBON
 
 # ANSIFLAGS: Put there the flags used to make your compiler ANSI-compliant.
 #

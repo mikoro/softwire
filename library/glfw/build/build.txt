@@ -4,6 +4,9 @@ http://sourceforge.net/projects/glfw/files/glfw/3.0.3/glfw-3.0.3.zip/download
 Windows:
 Use MSYS
 
+Mac:
+glext.h may need modifying (e.g. ptrdiff_t GLsizeiptrARB -° long GLsizeiptrARB)
+
 copy CMakeLists.txt -> /
 modify CMakeLists.txt (CFLAGS/LDFLAGS 32/64 bit, bottom of the file)
 mkdir build && cd build
