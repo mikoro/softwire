@@ -32,21 +32,28 @@ CFLAGS_RELEASE := $(CFLAGS) -release -O3 -L-s
 CFLAGS_PROFILE := $(CFLAGS) -release -O3 -g
 
 UNAME := $(shell uname -s | tr "[:upper:]" "[:lower:]")
+VERSION := $(shell cat VERSION)
 
 ifneq "$(findstring mingw,$(UNAME))" ""
 	PLATFORM = windows
 	RESOURCES = misc/windows/softwire.res.o
 	LFLAGS = -L-lopengl32 -L-lgdi32 -L--subsystem=windows
+	DISTDIR := softwire-$(VERSION)
+	DISTDATADIR := softwire-$(VERSION)
 endif
 ifneq "$(findstring linux,$(UNAME))" ""
 	PLATFORM = linux
 	RESOURCES = 
 	LFLAGS = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi
+	DISTDIR := softwire-$(VERSION)
+	DISTDATADIR := softwire-$(VERSION)
 endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
 	RESOURCES = 
 	LFLAGS = 
+	DISTDIR = Softwire.app
+	DISTDATADIR = Softwire.app/Contents/Resources
 endif
 
 ifndef PLATFORM
@@ -55,8 +62,6 @@ endif
 
 LIBRARIES = library/glfw/$(PLATFORM)/libglfw$(BITNESS).a \
 			library/freetype/$(PLATFORM)/libfreetype$(BITNESS).a
-
-VERSION := $(shell cat VERSION)
 
 .PHONY: default all pre-build debug release profile doc dist clean
 
@@ -92,23 +97,23 @@ doc:
 
 dist:
 	@echo "Building distribution..."
+	mkdir -p $(DISTDIR) $(DISTDATADIR)
 ifeq "$(PLATFORM)" "windows"
-	#cp -R bin softwire-$(VERSION)
-	#pandoc -f markdown_github -t html5 -o softwire-$(VERSION)/readme.html --template=misc/pandoc/html5.template README.md
-	#7z a -tzip -mx9 softwire-$(PLATFORM)-$(VERSION).zip softwire-$(VERSION)
-	#rm -rf softwire-$(VERSION)
 endif
 ifeq "$(PLATFORM)" "linux"
 endif
 ifeq "$(PLATFORM)" "mac"
-	mkdir -p Softwire.app Softwire.app/Contents Softwire.app/Contents/MacOS Softwire.app/Contents/Resources
+	mkdir -p Softwire.app/Contents/MacOS
 	cp misc/mac/Info.plist Softwire.app/Contents
 	cp misc/mac/softwire.icns Softwire.app/Contents/Resources
-	cp -R data Softwire.app/Contents/Resources
-	cp misc/softwire.conf Softwire.app/Contents/Resources
 	lipo -create -output Softwire.app/Contents/MacOS/softwire bin/softwire32 bin/softwire64
 endif
-
+	cp -R data $(DISTDATADIR)
+	cp misc/softwire.conf $(DISTDATADIR)
+	cp LICENSE $(DISTDATADIR)/License.txt
+	pandoc -f markdown_github -t html5 -o $(DISTDATADIR)/readme.html --template=misc/pandoc/html5.template README.md
+	7z a -tzip -mx9 -xr!.DS_Store softwire-$(PLATFORM)-$(VERSION).zip $(DISTDIR)
+	rm -rf $(DISTDIR)
 clean:
 	@echo "Cleaning all..."
 	rm -rf bin doc obj *.zip
