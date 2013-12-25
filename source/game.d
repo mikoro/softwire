@@ -43,7 +43,7 @@ class Game
 			framebuffer = new FramebufferOpenGL3(log, settings);
 
 		shouldRun = true;
-		text = new Text(log, "data/fonts/aller.ttf", 14);
+		text = new Text(log, "data/fonts/noto-bold.ttf", 14);
 		renderFpsCounter = new FpsCounter();
 	}
 
