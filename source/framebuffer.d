@@ -58,22 +58,22 @@ class Framebuffer
 
 class FramebufferOpenGL3 : Framebuffer
 {
-	this(Logger logger, Settings settings)
+	this(Logger log, Settings settings)
 	{
-		this.logger = logger;
+		this.log = log;
 
-		logger.logInfo("Loading OpenGL 3 functions");
+		log.logInfo("Loading OpenGL 3 functions");
 
 		DerelictGL3.load();
 		DerelictGL3.reload();
 
-		logger.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
+		log.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
 		width = settings.displayWidth / settings.framebufferScale;
 		height = settings.displayHeight / settings.framebufferScale;
 		data = new uint[width * height];
 
-		logger.logInfo("Compiling shaders");
+		log.logInfo("Compiling shaders");
 
 		GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
@@ -94,7 +94,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		textureSamplerId = glGetUniformLocation(shaderProgramId, "in_textureSampler");
 
-		logger.logInfo("Allocating vertex and texture memory");
+		log.logInfo("Allocating vertex and texture memory");
 
 		glGenVertexArrays(1, &vertexArrayObjectId);
 		glBindVertexArray(vertexArrayObjectId);
@@ -160,7 +160,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 	private
 	{
-		Logger logger;
+		Logger log;
 
 		GLuint vertexArrayObjectId;
 		GLuint shaderProgramId;
@@ -214,15 +214,15 @@ class FramebufferOpenGL3 : Framebuffer
 
 class FramebufferOpenGL1 : Framebuffer
 {
-	this(Logger logger, Settings settings)
+	this(Logger log, Settings settings)
 	{
-		this.logger = logger;
+		this.log = log;
 
-		logger.logInfo("Loading legacy OpenGL functions");
+		log.logInfo("Loading legacy OpenGL functions");
 
 		DerelictGL.load();
 
-		logger.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
+		log.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
 		width = settings.displayWidth / settings.framebufferScale;
 		height = settings.displayHeight / settings.framebufferScale;
@@ -268,7 +268,7 @@ class FramebufferOpenGL1 : Framebuffer
 
 	private
 	{
-		Logger logger;
+		Logger log;
 
 		GLuint textureId;
 	}

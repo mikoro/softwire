@@ -14,11 +14,11 @@ import logger;
 
 class Settings
 {
-	this(Logger logger, string fileName)
+	this(Logger log, string fileName)
 	{
-		this.logger = logger;
+		this.log = log;
 
-		logger.logInfo("Parsing settings file");
+		log.logInfo("Parsing settings file");
 
 		json = parseJSON(readText(fileName));
 	}
@@ -33,7 +33,7 @@ class Settings
  
 	private
 	{
-		Logger logger;
+		Logger log;
 		JSONValue json;
 	}
 }

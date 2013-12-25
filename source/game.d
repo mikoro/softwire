@@ -21,12 +21,12 @@ import rasterizer;
 
 class Game
 {
-	this(Logger logger)
+	this(Logger log)
 	{
-		this.logger = logger;
-		settings = new Settings(logger, "softwire.conf");
+		this.log = log;
+		settings = new Settings(log, "softwire.conf");
 
-		logger.logInfo("Creating the window");
+		log.logInfo("Creating the window");
 
 		window = glfwCreateWindow(settings.displayWidth, settings.displayHeight, "Softwire", settings.isFullscreen ? glfwGetPrimaryMonitor() : null, null);
 
@@ -35,33 +35,27 @@ class Game
 
 		glfwMakeContextCurrent(window);
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
-		glfwSetKeyCallback(window, &glfwKeyCallback);
 		glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
 
 		if (settings.useLegacyOpenGL)
-			framebuffer = new FramebufferOpenGL1(logger, settings);
+			framebuffer = new FramebufferOpenGL1(log, settings);
 		else
-			framebuffer = new FramebufferOpenGL3(logger, settings);
+			framebuffer = new FramebufferOpenGL3(log, settings);
 
-		text = new Text(logger, "data/fonts/aller.ttf", 14);
+		shouldRun = true;
+		text = new Text(log, "data/fonts/aller.ttf", 14);
 		renderFpsCounter = new FpsCounter();
-		physicsFpsCounter = new FpsCounter();
-	}
-
-	~this()
-	{
-		glfwTerminate();
 	}
 
 	void mainLoop()
 	{
-		logger.logInfo("Starting the main loop");
+		log.logInfo("Starting the main loop");
 
 		double timeStep = 1.0 / 60;
 		double currentTime = glfwGetTime();
 		double timeAccumulator = 0;
 
-		while (!glfwWindowShouldClose(window))
+		while (shouldRun)
 		{
 			double newTime = glfwGetTime();
 			double frameTime = newTime - currentTime;
@@ -86,7 +80,12 @@ class Game
 	void update(double timeStep)
 	{
 		glfwPollEvents();
-		physicsFpsCounter.tick();
+
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			shouldRun = false;
+
+		if (glfwWindowShouldClose(window))
+			shouldRun = false;
 	}
 
 	void render(double interpolation)
@@ -115,13 +114,13 @@ class Game
 
 	private
 	{
-		static Logger logger;
+		Logger log;
 		Settings settings;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
+		bool shouldRun;
 		Text text;
 		FpsCounter renderFpsCounter;
-		FpsCounter physicsFpsCounter;
 	}
 }
 
@@ -130,11 +129,5 @@ extern(C) private nothrow
 	void glfwFramebufferSizeCallback(GLFWwindow* window, int framebufferWidth, int framebufferHeight)
 	{
 		glViewport(0, 0, framebufferWidth, framebufferHeight);
-	}
-
-	void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-			glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }

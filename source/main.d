@@ -10,34 +10,34 @@ module main;
 import std.c.stdlib;
 import std.conv;
 import std.stdio;
+import std.string;
 
 import deimos.glfw.glfw3;
 
 import logger;
 import game;
 
-private Logger mainLog;
+private Logger log;
 
 int main()
 {
-	if (!glfwInit())
-	{
-		writeln("Could not initialize GLFW");
-		return -1;
-	}
-	
 	glfwSetErrorCallback(&glfwErrorCallback);
+
+	if (!glfwInit())
+		return -1;
 	
-	mainLog = new FileLogger("softwire.log");
+	scope(exit) { glfwTerminate(); }
+
+	log = new FileLogger("softwire.log");
 
 	try
 	{
-		Game game = new Game(mainLog);
-		game.mainloop();
+		Game game = new Game(log);
+		game.mainLoop();
 	}
 	catch(Exception ex)
 	{
-		mainLog.logThrowable(ex);
+		log.logThrowable(ex);
 		return -1;
 	}
 
@@ -50,7 +50,12 @@ extern(C) private nothrow
 	{
 		try
 		{
-			mainLog.logError("GLFW: %s", to!string(description));
+			string message = format("GLFW error: %s", to!string(description));
+
+			writeln(message);
+
+			if (log !is null)
+				log.logError(message);
 		}
 		catch(Throwable t)
 		{

@@ -17,11 +17,11 @@ import framebuffer;
 
 class Text
 {
-	this(Logger logger, string fontFileName, uint size)
+	this(Logger log, string fontFileName, uint size)
 	{
-		this.logger = logger;
+		this.log = log;
 
-		logger.logInfo("Loading font data from %s", fontFileName);
+		log.logInfo("Loading font from %s", fontFileName);
 
 		FT_Error error = FT_Init_FreeType(&library);
 
@@ -122,7 +122,7 @@ class Text
 			int advanceX;
 		}
 
-		Logger logger;
+		Logger log;
 		Glyph[dchar] glyphs;
 
 		FT_Library library;
