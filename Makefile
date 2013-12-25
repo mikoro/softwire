@@ -1,8 +1,8 @@
-# Makefile for compiling Softwire
-# Uses the LDC compiler (http://wiki.dlang.org/LDC)
-# Automatically detects platforms: Windows, Linux or Mac (on Windows, needs to be run from MinGW MSYS)
-# Define 64BIT=1 on the command line to enable 64-bit build (not supported on Windows at the moment)
-# Define NATIVE=1 on the command line to build native executables
+# Softwire makefile
+# LDC compiler needed (http://wiki.dlang.org/LDC)
+# Automatically detects platforms: Windows, Linux or Mac
+# Define 64BIT=1 for 64-bit compilation
+# Define NATIVE=1 for native compilation
 
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
@@ -99,7 +99,7 @@ dist:
 	@echo "Building distribution..."
 	mkdir -p $(DISTDIR) $(DISTDATADIR)
 ifeq "$(PLATFORM)" "windows"
-	cp bin/softwire{32,64}.exe $(DISTDIR)
+	cp bin/softwire32.exe $(DISTDIR)
 endif
 ifeq "$(PLATFORM)" "linux"
 	cp bin/softwire{32,64} $(DISTDIR)
@@ -108,7 +108,7 @@ ifeq "$(PLATFORM)" "mac"
 	mkdir -p Softwire.app/Contents/MacOS
 	cp misc/mac/Info.plist Softwire.app/Contents
 	cp misc/mac/softwire.icns Softwire.app/Contents/Resources
-	lipo -create -output Softwire.app/Contents/MacOS/softwire bin/softwire32 bin/softwire64
+	lipo -create -output Softwire.app/Contents/MacOS/softwire bin/softwire{32,64}
 endif
 	cp -R data $(DISTDATADIR)
 	cp misc/softwire.conf $(DISTDATADIR)
