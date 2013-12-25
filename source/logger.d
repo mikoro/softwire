@@ -45,7 +45,7 @@ class Logger
 	}
 }
 
-class FileLogger : Logger
+class FileAndConsoleLogger : Logger
 {
 	this(string fileName)
 	{
@@ -55,7 +55,9 @@ class FileLogger : Logger
 	override void logMessage(MessageType type, lazy string message)
 	{
 		auto time = Clock.currTime();
-		logFile.writefln("%02d:%02d:%02d.%03d %s - %s", time.hour, time.minute, time.second, time.fracSec.msecs, type, message);
+		string formattedMessage = format("%02d:%02d:%02d.%03d %s - %s", time.hour, time.minute, time.second, time.fracSec.msecs, type, message);
+		writeln(formattedMessage);
+		logFile.writefln(formattedMessage);
 		logFile.flush();
 	}
 

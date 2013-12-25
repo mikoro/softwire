@@ -36,21 +36,24 @@ VERSION := $(shell cat VERSION)
 ifneq "$(findstring mingw,$(UNAME))" ""
 	PLATFORM = windows
 	RESOURCES = misc/windows/softwire.res.o
-	LFLAGS = -L-lopengl32 -L-lgdi32 -L--subsystem=windows
+	LFLAGS_DEBUG = -L-lopengl32 -L-lgdi32
+	LFLAGS_RELEASE := $(LFLAGS_DEBUG) -L--subsystem=windows
 	DISTDIR := softwire-$(VERSION)
 	DISTDATADIR := softwire-$(VERSION)
 endif
 ifneq "$(findstring linux,$(UNAME))" ""
 	PLATFORM = linux
 	RESOURCES = 
-	LFLAGS = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi
+	LFLAGS_DEBUG = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi
+	LFLAGS_RELEASE := $(LFLAGS_DEBUG)
 	DISTDIR := softwire-$(VERSION)
 	DISTDATADIR := softwire-$(VERSION)
 endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
 	RESOURCES = 
-	LFLAGS = -L-framework -LCocoa -L-framework -LOpenGL -L-framework -LIOKit
+	LFLAGS_DEBUG = -L-framework -LCocoa -L-framework -LOpenGL -L-framework -LIOKit
+	LFLAGS_RELEASE := $(LFLAGS_DEBUG)
 	DISTDIR = Softwire.app
 	DISTDATADIR = Softwire.app/Contents/Resources
 endif
@@ -80,15 +83,15 @@ endif
 
 debug: pre-build
 	@echo "Compiling debug version..."
-	ldc2 $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwired$(BITNESS) $(LFLAGS)
+	ldc2 $(CFLAGS_DEBUG) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwired$(BITNESS) $(LFLAGS_DEBUG)
 
 release: pre-build
 	@echo "Compiling release version..."
-	ldc2 $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwire$(BITNESS) $(LFLAGS)
+	ldc2 $(CFLAGS_RELEASE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwire$(BITNESS) $(LFLAGS_RELEASE)
 
 profile: pre-build
 	@echo "Compiling profile version..."
-	ldc2 $(CFLAGS_PROFILE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwirep$(BITNESS) $(LFLAGS)
+	ldc2 $(CFLAGS_PROFILE) $(SOURCE_FILES) $(IMPORT_FILES) $(LIBRARIES) $(RESOURCES) -of=bin/softwirep$(BITNESS) $(LFLAGS_RELEASE)
 
 doc:
 	@echo "Creating documentation..."

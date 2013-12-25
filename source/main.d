@@ -28,7 +28,7 @@ int main()
 	
 	scope(exit) { glfwTerminate(); }
 
-	log = new FileLogger("softwire.log");
+	log = new FileAndConsoleLogger("softwire.log");
 
 	try
 	{
