@@ -4,17 +4,21 @@
 <dict>
 	<key>CFBundleName</key>
 	<string>Softwire</string>
-	<key>CFBundleExecutable</key>
-	<string>softwire</string>
-	<key>CFBundleIconFile</key>
-	<string>softwire.icns</string>
+	<key>CFBundleDisplayName</key>
+	<string>Softwire</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.mikkoronkainen.Softwire</string>
 	<key>CFBundleShortVersionString</key>
 	<string>0.1.0</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>softwire</string>
+	<key>CFBundleIconFile</key>
+	<string>softwire.icns</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013 Mikko Ronkainen. All rights reserved.</string>
+	<string>Copyright © 2013 Mikko Ronkainen</string>
 </dict>
 </plist>

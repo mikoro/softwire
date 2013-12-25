@@ -3,7 +3,6 @@
 # Automatically detects platforms: Windows, Linux or Mac (on Windows, needs to be run from MinGW MSYS)
 # Define 64BIT=1 on the command line to enable 64-bit build (not supported on Windows at the moment)
 # Define NATIVE=1 on the command line to build native executables
-# Mac linking doesn't work at the moment, use the commands at the bottom
 
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
@@ -51,7 +50,7 @@ endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
 	RESOURCES = 
-	LFLAGS = 
+	LFLAGS = -L-framework -LCocoa -L-framework -LOpenGL -L-framework -LIOKit
 	DISTDIR = Softwire.app
 	DISTDATADIR = Softwire.app/Contents/Resources
 endif
@@ -64,6 +63,7 @@ LIBRARIES = library/glfw/$(PLATFORM)/libglfw$(BITNESS).a \
 			library/freetype/$(PLATFORM)/libfreetype$(BITNESS).a
 
 .PHONY: default all pre-build debug release profile doc dist clean
+#.SILENT:
 
 default: release
 
@@ -120,7 +120,3 @@ endif
 clean:
 	@echo "Cleaning all..."
 	rm -rf bin doc obj *.zip
-
-# Mac release linking commands:
-# gcc -m32 -o bin/softwire32 obj/softwire32.o library/glfw/mac/libglfw32.a library/freetype/mac/libfreetype32.a -L/Users/mikoro/ldc/bin/../lib -lphobos-ldc -framework Cocoa -framework OpenGL -framework IOKit
-# gcc -m64 -o bin/softwire64 obj/softwire64.o library/glfw/mac/libglfw64.a library/freetype/mac/libfreetype64.a -L/Users/mikoro/ldc/bin/../lib -lphobos-ldc -framework Cocoa -framework OpenGL -framework IOKit

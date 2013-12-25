@@ -11,10 +11,10 @@ BEGIN
       VALUE "FileDescription", "A simple 3D software rasterizer"
       VALUE "ProductName", "Softwire"
       VALUE "InternalName", "Softwire"
-      VALUE "ProductVersion", "1.0"
-      VALUE "FileVersion", "1.0"
+      VALUE "ProductVersion", "0.1.0"
+      VALUE "FileVersion", "0.1.0"
       VALUE "CompanyName", "Mikko Ronkainen"
-      VALUE "LegalCopyright", "Mikko Ronkainen"
+      VALUE "LegalCopyright", "Copyright © 2013 Mikko Ronkainen"
       VALUE "OriginalFilename", "softwire.exe"
     END
   END
