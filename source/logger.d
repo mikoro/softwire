@@ -1,8 +1,8 @@
 /**
- * Simple (plain text) file based logger.
+ * A simple logger class.
  *
- * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License
+ * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: GPLv3, see the LICENSE file
  */
 
 module logger;

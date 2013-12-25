@@ -1,11 +1,8 @@
 /**
- * Calculates FPS from frametimes using exponential moving average.
+ * Helper class for calculating FPS values.
  *
- * See http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average for details.
- * Also provides rate limited updates so that the visible result only updates X times per seconds.
- *
- * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License
+ * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: GPLv3, see the LICENSE file
  */
 
 module fpscounter;
@@ -27,6 +24,7 @@ class FpsCounter
 
 	void tick()
 	{
+		// http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
 		smoothFrametime = smoothingFactor * previousFrametime + (1.0 - smoothingFactor) * previousSmoothFrametime;
 
 		double currentTime = glfwGetTime();

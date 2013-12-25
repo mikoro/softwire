@@ -1,8 +1,8 @@
 /**
- * Game initialization and mainloop logic.
+ * Game initialization and main loop logic.
  *
- * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License
+ * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: GPLv3, see the LICENSE file
  */
 
 module game;
@@ -53,9 +53,9 @@ class Game
 		glfwTerminate();
 	}
 
-	void mainloop()
+	void mainLoop()
 	{
-		logger.logInfo("Starting the mainloop");
+		logger.logInfo("Starting the main loop");
 
 		double timeStep = 1.0 / 60;
 		double currentTime = glfwGetTime();

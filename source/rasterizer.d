@@ -1,8 +1,8 @@
 /**
- * Implements rasterization algorithms for different primitives.
+ * Rasterization algorithms for various primitives.
  *
- * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License
+ * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: GPLv3, see the LICENSE file
  */
 
 module rasterizer;

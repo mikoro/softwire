@@ -1,8 +1,8 @@
 /**
- * Implements settings reading from a configuration file.
+ * Settings class encapsulating a json/ini configuration file.
  *
- * Copyright: Copyright (C) 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: MIT License
+ * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: GPLv3, see the LICENSE file
  */
 
 module settings;
