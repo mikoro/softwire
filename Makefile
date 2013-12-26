@@ -66,7 +66,7 @@ LIBRARIES = library/glfw/$(PLATFORM)/libglfw$(BITNESS).a \
 			library/freetype/$(PLATFORM)/libfreetype$(BITNESS).a
 
 .PHONY: default all pre-build debug release profile doc dist clean
-#.SILENT:
+.SILENT:
 
 default: release
 
