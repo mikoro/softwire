@@ -10,7 +10,7 @@ module text;
 import std.conv;
 import std.string;
 
-import freetype.freetype;
+import derelict.freetype.ft;
 
 import logger;
 import framebuffer;
