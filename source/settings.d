@@ -30,7 +30,7 @@ class Settings
 	@property int framebufferScale() { return cast(int)json.object["framebuffer"].object["scale"].integer; }
 	@property bool useLinearFiltering() { return cast(bool)json.object["framebuffer"].object["useLinearFiltering"].integer; }
 	@property bool useLegacyOpenGL() { return cast(bool)json.object["framebuffer"].object["useLegacyOpenGL"].integer; }
- 
+
 	private
 	{
 		Logger log;

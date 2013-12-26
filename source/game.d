@@ -104,7 +104,7 @@ class Game
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
-		
+
 		framebuffer.render();
 		glfwSwapBuffers(window);
 		framebuffer.clear(0xff000000, 0xffB56300);

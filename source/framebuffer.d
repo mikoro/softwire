@@ -255,7 +255,7 @@ class FramebufferOpenGL1 : Framebuffer
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data.ptr);
-		
+
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  0.0);
 		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  0.0);
