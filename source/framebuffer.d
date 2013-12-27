@@ -15,6 +15,7 @@ import std.string;
 import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 
+import color;
 import logger;
 import settings;
 
@@ -24,34 +25,30 @@ class Framebuffer
 
 	void clear()
 	{
-		data[] = 0;
+		pixelData[] = 0;
+		depthData[] = 0;
 	}
 
-	void clear(uint color)
+	void clear(Color color)
 	{
-		data[] = color;
+		pixelData[] = color.value;
+		depthData[] = 0;
 	}
 
-	void clear(uint startColor, uint endColor)
+	void clear(Color startColor, Color endColor)
 	{
-		uint resultColor;
-		ubyte* c1 = cast(ubyte*)&startColor;
-		ubyte* c2 = cast(ubyte*)&endColor;
-		ubyte* c3 = cast(ubyte*)&resultColor;
-
 		foreach (y; 0 .. height)
 		{
 			double alpha = y / cast(double)height;
-			c3[0] = cast(ubyte)((c1[0] + (c2[0] - c1[0]) * alpha) + 0.5);
-			c3[1] = cast(ubyte)((c1[1] + (c2[1] - c1[1]) * alpha) + 0.5);
-			c3[2] = cast(ubyte)((c1[2] + (c2[2] - c1[2]) * alpha) + 0.5);
-			c3[3] = 0xff;
-
-			data[y * width .. y * width + width] = resultColor;
+			pixelData[y * width .. y * width + width] = Color.lerp(startColor, endColor, alpha).value;
 		}
+
+		depthData[] = 0;
 	}
 
-	uint[] data;
+	uint[] pixelData;
+	double[] depthData;
+
 	int width;
 	int height;
 }
@@ -71,7 +68,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		width = settings.displayWidth / settings.framebufferScale;
 		height = settings.displayHeight / settings.framebufferScale;
-		data = new uint[width * height];
+		pixelData = new uint[width * height];
 
 		log.logInfo("Compiling shaders");
 
@@ -145,7 +142,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
 		glBindSampler(0, samplerId);
 		glUniform1i(textureSamplerId, 0);
 
@@ -226,7 +223,7 @@ class FramebufferOpenGL1 : Framebuffer
 
 		width = settings.displayWidth / settings.framebufferScale;
 		height = settings.displayHeight / settings.framebufferScale;
-		data = new uint[width * height];
+		pixelData = new uint[width * height];
 
 		glEnable(GL_TEXTURE_2D);
 		glClearColor(1.0, 0.0, 0.0, 0.0);
@@ -254,7 +251,7 @@ class FramebufferOpenGL1 : Framebuffer
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
 
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  0.0);

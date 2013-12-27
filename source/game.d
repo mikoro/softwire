@@ -12,12 +12,13 @@ import std.conv;
 import deimos.glfw.glfw3;
 import derelict.opengl3.gl;
 
-import logger;
-import settings;
-import framebuffer;
-import text;
+import color;
 import fpscounter;
+import framebuffer;
+import logger;
 import rasterizer;
+import settings;
+import text;
 
 class Game
 {
@@ -97,11 +98,11 @@ class Game
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			//rasterizer.drawCircle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 0x7fffffff);
-			rasterizer.drawRectangle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 20, 0x7fffffff);
+			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 20, 0x7fffffff);
 		}
 
 		//rasterizer.drawCircle(framebuffer, 20, 20, 20, 0x7fffffff);
-		rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, 0x7fffffff);
+		//rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
 
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
@@ -109,7 +110,7 @@ class Game
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
-		framebuffer.clear(0xff000000, 0xffB56300);
+		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
 		renderFpsCounter.update();
 	}

@@ -64,11 +64,11 @@ class Text
 
 					if (fg3[3] == 0xff)
 					{
-						framebuffer.data[framebufferStart + j] = finalColor;
+						framebuffer.pixelData[framebufferStart + j] = finalColor;
 						continue;
 					}
 
-					ubyte* bg = cast(ubyte*)(&framebuffer.data[framebufferStart + j]);
+					ubyte* bg = cast(ubyte*)(&framebuffer.pixelData[framebufferStart + j]);
 
 					uint alpha = fg3[3] + 1;
 					uint invAlpha = 257 - alpha;
