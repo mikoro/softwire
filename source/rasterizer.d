@@ -68,7 +68,7 @@ void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height,
 	{
 		int framebufferStart = x + i * framebuffer.width;
 
-		foreach(j; clipLeft .. width - clipRight)
+		foreach (j; clipLeft .. width - clipRight)
 		{
 			ubyte* bg = cast(ubyte*)(&framebuffer.data[framebufferStart + j]);
 
@@ -117,7 +117,7 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, uint color)
 			int framebufferStart = x + i * framebuffer.width;
 			int y2 = (i - y) * (i - y);
 
-			foreach(j; -radius + clipLeft .. radius - clipRight)
+			foreach (j; -radius + clipLeft .. radius - clipRight)
 			{
 				if ((j * j + y2) <= squaredRadius)
 					framebuffer.data[framebufferStart + j] = color;
@@ -127,18 +127,18 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, uint color)
 		return;
 	}
 
-	uint alpha = fg[3] + 1;
-	uint invAlpha = 257 - alpha;
-	uint afg0 = alpha * fg[0];
-	uint afg1 = alpha * fg[1];
-	uint afg2 = alpha * fg[2];
+	int alpha = fg[3] + 1;
+	int invAlpha = 257 - alpha;
+	int afg0 = alpha * fg[0];
+	int afg1 = alpha * fg[1];
+	int afg2 = alpha * fg[2];
 
 	foreach (i; y - radius + clipBottom .. y + radius - clipTop)
 	{
 		int framebufferStart = x + i * framebuffer.width;
 		int y2 = (i - y) * (i - y);
 
-		foreach(j; -radius + clipLeft .. radius - clipRight)
+		foreach (j; -radius + clipLeft .. radius - clipRight)
 		{
 			if ((j * j + y2) <= squaredRadius)
 			{
@@ -147,7 +147,6 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, uint color)
 				bg[0] = cast(ubyte)((afg0 + invAlpha * bg[0]) >> 8);
 				bg[1] = cast(ubyte)((afg1 + invAlpha * bg[1]) >> 8);
 				bg[2] = cast(ubyte)((afg2 + invAlpha * bg[2]) >> 8);
-				bg[3] = 0xff;
 			}
 		}
 	}
