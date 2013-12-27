@@ -101,7 +101,7 @@ class Game
 
 		rasterizer.drawCircle(framebuffer, 20, 20, 20, 0x7fffffff);
 
-		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getRateLimitedFps(), 0x7fffffff);
+		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
 		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
 
@@ -109,7 +109,7 @@ class Game
 		glfwSwapBuffers(window);
 		framebuffer.clear(0xff000000, 0xffB56300);
 
-		renderFpsCounter.tick();
+		renderFpsCounter.update();
 	}
 
 	private
