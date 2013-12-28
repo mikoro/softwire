@@ -44,6 +44,7 @@ class Game
 
 		shouldRun = true;
 		text = new Text(log, "data/fonts/liberation-regular.ttf", 14);
+		bigText = new Text(log, "data/fonts/noto-bold.ttf", 400);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -101,25 +102,27 @@ class Game
 		scaledMouseX = cast(int)(((mouseX / cast(double)framebufferWidth) * framebuffer.width) + 0.5);
 		scaledMouseY = cast(int)(((mouseY / cast(double)framebufferHeight) * framebuffer.height) + 0.5);
 
+		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
+		rasterizer.drawRectangle(framebuffer, 100, 100, 1060, 580, Color(255, 255, 255, 128));
+
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 3), "W w: " ~ to!dstring(windowWidth), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 4), "W h: " ~ to!dstring(windowHeight), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 5), "F w: " ~ to!dstring(framebufferWidth), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 6), "F h: " ~ to!dstring(framebufferHeight), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 7), "M x: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 8), "M y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 9), "S x: " ~ to!dstring(scaledMouseX), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 10), "S y: " ~ to!dstring(scaledMouseY), Color(255, 255, 255, 128));
+
+		bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
+
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			rasterizer.drawCircle(framebuffer, scaledMouseX, scaledMouseY, 60, Color(255, 255, 255, 128));
+			rasterizer.drawCircle(framebuffer, scaledMouseX, scaledMouseY, 60, Color(0, 255, 0, 128));
 			//rasterizer.drawRectangle(framebuffer, scaledMouseX, scaledMouseY, 1, 1, Color(255, 255, 255, 255));
 			//text.drawText(framebuffer, scaledMouseX, scaledMouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
 		}
-
-		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
-		//rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
-
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 2), "W w: " ~ to!dstring(windowWidth), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 3), "W h: " ~ to!dstring(windowHeight), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 4), "F w: " ~ to!dstring(framebufferWidth), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 5), "F h: " ~ to!dstring(framebufferHeight), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 6), "M x: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 7), "M y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 8), "S x: " ~ to!dstring(scaledMouseX), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 9), "S y: " ~ to!dstring(scaledMouseY), Color(255, 255, 255, 128));
 
 		glViewport(0, 0, framebufferWidth, framebufferHeight);
 
@@ -138,6 +141,7 @@ class Game
 		Framebuffer framebuffer;
 		bool shouldRun;
 		Text text;
+		Text bigText;
 		FpsCounter renderFpsCounter;
 	}
 }

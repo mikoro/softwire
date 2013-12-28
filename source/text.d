@@ -108,7 +108,8 @@ class Text
 	{
 		void generateGlyph(dchar character)
 		{
-			FT_Load_Char(face, character, FT_LOAD_FORCE_AUTOHINT | FT_LOAD_RENDER);
+			//FT_Load_Char(face, character, FT_LOAD_FORCE_AUTOHINT | FT_LOAD_RENDER);
+			FT_Load_Char(face, character, FT_LOAD_RENDER);
 			FT_Bitmap* bitmap = &face.glyph.bitmap;
 
 			Glyph glyph;
