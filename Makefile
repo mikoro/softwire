@@ -43,7 +43,7 @@ ifneq "$(findstring mingw,$(UNAME))" ""
 endif
 ifneq "$(findstring linux,$(UNAME))" ""
 	PLATFORM = linux
-	RESOURCES = 
+	RESOURCES =
 	LFLAGS_DEBUG = -L-lGL -L-lX11 -L-lXxf86vm -L-lXrandr -L-lXi
 	LFLAGS_RELEASE := $(LFLAGS_DEBUG)
 	DISTDIR := softwire-$(VERSION)
@@ -51,7 +51,7 @@ ifneq "$(findstring linux,$(UNAME))" ""
 endif
 ifneq "$(findstring darwin,$(UNAME))" ""
 	PLATFORM = mac
-	RESOURCES = 
+	RESOURCES =
 	LFLAGS_DEBUG = -L-framework -LCocoa -L-framework -LOpenGL -L-framework -LIOKit
 	LFLAGS_RELEASE := $(LFLAGS_DEBUG)
 	DISTDIR = Softwire.app
@@ -79,6 +79,7 @@ ifeq "$(wildcard bin)" ""
 	mkdir -p bin
 	cp -R data bin
 	cp misc/softwire.conf bin
+	cp misc/softwire.ini bin
 endif
 
 debug: pre-build
@@ -115,6 +116,7 @@ ifeq "$(PLATFORM)" "mac"
 endif
 	cp -R data $(DISTDATADIR)
 	cp misc/softwire.conf $(DISTDATADIR)
+	cp misc/softwire.ini $(DISTDATADIR)
 	cp LICENSE $(DISTDATADIR)/license.txt
 	pandoc -f markdown_github -t html5 -o $(DISTDATADIR)/readme.html --template=misc/pandoc/html5.template README.md
 	7z a -tzip -mx9 -xr!.DS_Store softwire-$(PLATFORM)-$(VERSION).zip $(DISTDIR)

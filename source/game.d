@@ -18,6 +18,7 @@ import framebuffer;
 import logger;
 import rasterizer;
 import settings;
+import settings2;
 import text;
 
 class Game
@@ -26,6 +27,7 @@ class Game
 	{
 		this.log = log;
 		settings = new Settings(log, "softwire.conf");
+		settings2 = new Settings2(log, "softwire.ini");
 
 		log.logInfo("Creating the window");
 
@@ -123,6 +125,7 @@ class Game
 	{
 		Logger log;
 		Settings settings;
+		Settings2 settings2;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		bool shouldRun;
