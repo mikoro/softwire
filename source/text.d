@@ -48,12 +48,40 @@ class Text
 
 			Glyph glyph = glyphs[character];
 
-			foreach (i; 0 .. glyph.bitmapHeight)
+			int adjustedX = x + glyph.adjustX;
+			int adjustedY = y - glyph.adjustY;
+
+			x += glyph.advanceX;
+
+			if (glyph.bitmapWidth == 0 || glyph.bitmapHeight == 0)
+				continue;
+
+			int clipLeft = 0;
+			int clipRight = 0;
+			int clipBottom = 0;
+			int clipTop = 0;
+
+			if (adjustedX < 0)
+				clipLeft = -1 * adjustedX;
+
+			if (adjustedX + glyph.bitmapWidth > framebuffer.width)
+				clipRight = adjustedX + glyph.bitmapWidth - framebuffer.width;
+
+			if (adjustedY < 0)
+				clipBottom = -1 * adjustedY;
+
+			if (adjustedY + glyph.bitmapHeight > framebuffer.height)
+				clipTop = adjustedY + glyph.bitmapHeight - framebuffer.height;
+
+			if (clipLeft >= glyph.bitmapWidth || clipRight >= glyph.bitmapWidth || clipBottom >= glyph.bitmapHeight || clipTop >= glyph.bitmapHeight)
+				continue;
+
+			foreach (i; clipBottom .. glyph.bitmapHeight - clipTop)
 			{
-				int framebufferIndex = x + glyph.adjustX + (y - glyph.adjustY + i) * framebuffer.width;
+				int framebufferIndex = adjustedX + (adjustedY + i) * framebuffer.width;
 				int glyphBitmapIndex = i * glyph.bitmapWidth;
 
-				foreach (j; 0 .. glyph.bitmapWidth)
+				foreach (j; clipLeft .. glyph.bitmapWidth - clipRight)
 				{
 					ubyte glyphPixelAlpha = glyph.bitmap[glyphBitmapIndex + j];
 
@@ -73,8 +101,6 @@ class Text
 					combinedColor.alphaBlendDirect(framebufferPixelColor);
 				}
 			}
-
-			x += glyph.advanceX;
 		}
 	}
 

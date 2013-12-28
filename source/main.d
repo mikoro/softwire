@@ -35,7 +35,7 @@ int main()
 		Game game = new Game(log);
 		game.mainLoop();
 	}
-	catch(Exception ex)
+	catch(Throwable ex)
 	{
 		log.logThrowable(ex);
 		return -1;
@@ -52,10 +52,10 @@ extern(C) private nothrow
 		{
 			string message = format("GLFW error: %s", to!string(description));
 
-			writeln(message);
-
 			if (log !is null)
 				log.logError(message);
+			else
+				writeln(message);
 		}
 		catch(Throwable t)
 		{
