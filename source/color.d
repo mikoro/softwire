@@ -15,7 +15,25 @@ struct Color
 	{
 		color = alpha << 24 |  blue << 16 | green << 8 | red << 0;
 		colorPtr = &color;
-		colorArray = cast(ubyte*)&color;
+		colorArray = cast(ubyte*)colorPtr;
+	}
+
+	this(Color color)
+	{
+		this(color.value);
+	}
+
+	this(Color color, ubyte alpha)
+	{
+		this(color.value);
+		this.alpha = alpha;
+	}
+
+	this(uint color)
+	{
+		this.color = color;
+		this.colorPtr = &this.color;
+		this.colorArray = cast(ubyte*)colorPtr;
 	}
 
 	this(uint* colorPtr)

@@ -109,7 +109,7 @@ class Game
 		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
 		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
 
-		bigText.drawText(framebuffer, 10, 10, "ABCD", Color(255, 255, 255, 128));
+		//bigText.drawText(framebuffer, 10, 10, "ABCD", Color(255, 255, 255, 128));
 
 		framebuffer.render();
 		glfwSwapBuffers(window);

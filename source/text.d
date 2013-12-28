@@ -7,7 +7,6 @@
 
 module text;
 
-import std.conv;
 import std.string;
 
 import derelict.freetype.ft;
@@ -39,38 +38,43 @@ class Text
 
 	void drawText(Framebuffer framebuffer, int x, int y, dstring text, Color textColor)
 	{
+		if (textColor.alpha == 0)
+			return;
+
 		foreach (character; text)
 		{
 			if (!(character in glyphs))
 				generateGlyph(character);
 
-			foreach (i; 0 .. glyphs[character].bitmapHeight)
+			Glyph glyph = glyphs[character];
+
+			foreach (i; 0 .. glyph.bitmapHeight)
 			{
-				int framebufferIndex = x + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
-				int glyphBitmapIndex = i * glyphs[character].bitmapWidth;
+				int framebufferIndex = x + glyph.adjustX + (y - glyph.adjustY + i) * framebuffer.width;
+				int glyphBitmapIndex = i * glyph.bitmapWidth;
 
-				foreach (j; 0 .. glyphs[character].bitmapWidth)
+				foreach (j; 0 .. glyph.bitmapWidth)
 				{
-					Color glyphPixelColor = Color(&glyphs[character].bitmap[glyphBitmapIndex + j]);
+					ubyte glyphPixelAlpha = glyph.bitmap[glyphBitmapIndex + j];
 
-					if (textColor.alpha == 0 || glyphPixelColor.alpha == 0)
+					if (glyphPixelAlpha == 0)
 						continue;
 
-					ubyte combinedAlpha = cast(ubyte)((glyphPixelColor.alpha / (255.0 / textColor.alpha)) + 0.5);
-					Color combinedPixelColor = Color(textColor.red, textColor.green, textColor.blue, combinedAlpha);
+					ubyte combinedAlpha = cast(ubyte)((glyphPixelAlpha / (255.0 / textColor.alpha)));
+					Color combinedColor = Color(textColor, combinedAlpha);
 
-					if (combinedPixelColor.alpha == 255)
+					if (combinedColor.alpha == 255)
 					{
-						framebuffer.pixelData[framebufferIndex + j] = combinedPixelColor.value;
+						framebuffer.pixelData[framebufferIndex + j] = combinedColor.value;
 						continue;
 					}
 
 					Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
-					combinedPixelColor.alphaBlendDirect(framebufferPixelColor);
+					combinedColor.alphaBlendDirect(framebufferPixelColor);
 				}
 			}
 
-			x += glyphs[character].advanceX;
+			x += glyph.advanceX;
 		}
 	}
 
@@ -82,7 +86,7 @@ class Text
 			FT_Bitmap* bitmap = &face.glyph.bitmap;
 
 			Glyph glyph;
-			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
+			glyph.bitmap = new ubyte[bitmap.width * bitmap.rows];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
 
@@ -97,7 +101,7 @@ class Text
 			foreach_reverse (i; 0 .. bitmap.rows)
 			{
 				foreach (j; 0 .. bitmap.width)
-					glyph.bitmap[i * bitmap.width + j] = (bufferPtr[j] << 24) | 0x00ffffff; // use the alpha value combined with a white color
+					glyph.bitmap[i * bitmap.width + j] = bufferPtr[j];
 
 				bufferPtr += bitmap.pitch;
 			}
@@ -107,7 +111,7 @@ class Text
 
 		struct Glyph
 		{
-			uint[] bitmap;
+			ubyte[] bitmap;
 			int bitmapWidth;
 			int bitmapHeight;
 			int adjustX;
