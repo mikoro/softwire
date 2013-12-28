@@ -69,6 +69,7 @@ struct Color
 		return newColor;
 	}
 
+	/// Do alpha blending with another color and modify the other color directly.
 	void alphaBlendDirect(Color otherColor)
 	{
 		int tempAlpha = alpha + 1;
@@ -79,7 +80,7 @@ struct Color
 		otherColor.blue = cast(ubyte)((tempAlpha * blue + tempInvAlpha * otherColor.blue) >> 8);
 	}
 
-	/// Do alpha blending using precalculated values (precalculateAlphaBlend must be called before) and modify the other color directly
+	/// Do alpha blending using precalculated values (precalculateAlphaBlend must be called before) and modify the other color directly.
 	void alphaBlendPrecalculatedDirect(Color otherColor)
 	{
 		otherColor.red = cast(ubyte)((precalcRed + precalcInvAlpha * otherColor.red) >> 8);

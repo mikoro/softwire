@@ -98,12 +98,12 @@ class Game
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			//rasterizer.drawCircle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 0x7fffffff);
-			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 20, 0x7fffffff);
+			rasterizer.drawCircle(framebuffer, cast(int)mouseX, cast(int)mouseY, 60, Color(255, 255, 255, 128));
+			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 20, Color(255, 255, 255, 128));
 		}
 
-		//rasterizer.drawCircle(framebuffer, 20, 20, 20, 0x7fffffff);
-		//rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
+		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
+		rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
 
 		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
 		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));

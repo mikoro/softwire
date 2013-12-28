@@ -12,10 +12,10 @@ import std.stdio;
 import color;
 import framebuffer;
 
-void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height, Color color)
+void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height, Color rectangleColor)
 {
 	// if the alpha value is zero, nothing needs to be drawn
-	if (color.alpha == 0)
+	if (rectangleColor.alpha == 0)
 		return;
 
 	// drawing outside the framebuffer is "allowed"
@@ -43,35 +43,37 @@ void drawRectangle(Framebuffer framebuffer, int x, int y, int width, int height,
 
 	// simple rectangle resterization
 	// if the alpha is fully opaque, skip the alpha blending calculations
-	if (color.alpha == 255)
+	if (rectangleColor.alpha == 255)
 	{
+		// starting from lower left, draw one line at a time upwards
 		foreach (i; y + clipBottom .. y + height - clipTop)
 		{
-			int startIndex = x + i * framebuffer.width;
-			framebuffer.pixelData[startIndex + clipLeft .. startIndex + width - clipRight] = color.value;
+			int framebufferIndex = x + i * framebuffer.width;
+			framebuffer.pixelData[framebufferIndex + clipLeft .. framebufferIndex + width - clipRight] = rectangleColor.value;
 		}
 
 		return;
 	}
 
-	color.precalculateAlphaBlend();
+	rectangleColor.precalculateAlphaBlend();
 
 	// do the same as above but using alpha blending
 	foreach (i; y + clipBottom .. y + height - clipTop)
 	{
-		int startIndex = x + i * framebuffer.width;
+		int framebufferIndex = x + i * framebuffer.width;
 
+		// can't draw whole lines anymore because every pixel needs to be sampled for alpha blending
 		foreach (j; clipLeft .. width - clipRight)
 		{
-			uint* destColor = &framebuffer.pixelData[startIndex + j];
-			color.alphaBlendPrecalculatedDirect(Color(destColor));
+			Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
+			rectangleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
 		}
 	}
 }
 
-void drawCircle(Framebuffer framebuffer, int x, int y, int radius, Color color)
+void drawCircle(Framebuffer framebuffer, int x, int y, int radius, Color circleColor)
 {
-	if (color.alpha == 0)
+	if (circleColor.alpha == 0)
 		return;
 
 	int clipLeft = 0;
@@ -98,36 +100,37 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, Color color)
 
 	int squaredRadius = radius * radius;
 
-	if (color.alpha == 255)
+	if (circleColor.alpha == 255)
 	{
+		// brute force: go through every pixel inside a square encompassing the circle and if the pixel is inside the circle, draw the pixel
 		foreach (i; y - radius + clipBottom .. y + radius - clipTop)
 		{
-			int startIndex = x + i * framebuffer.width;
+			int framebufferIndex = x + i * framebuffer.width;
 			int y2 = (i - y) * (i - y);
 
 			foreach (j; -radius + clipLeft .. radius - clipRight)
 			{
 				if ((j * j + y2) <= squaredRadius)
-					framebuffer.pixelData[startIndex + j] = color.value;
+					framebuffer.pixelData[framebufferIndex + j] = circleColor.value;
 			}
 		}
 
 		return;
 	}
 
-	color.precalculateAlphaBlend();
+	circleColor.precalculateAlphaBlend();
 
 	foreach (i; y - radius + clipBottom .. y + radius - clipTop)
 	{
-		int startIndex = x + i * framebuffer.width;
+		int framebufferIndex = x + i * framebuffer.width;
 		int y2 = (i - y) * (i - y);
 
 		foreach (j; -radius + clipLeft .. radius - clipRight)
 		{
 			if ((j * j + y2) <= squaredRadius)
 			{
-				uint* destColor = &framebuffer.pixelData[startIndex + j];
-				color.alphaBlendPrecalculatedDirect(Color(destColor));
+				Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
+				circleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
 			}
 		}
 	}
