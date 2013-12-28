@@ -35,7 +35,6 @@ class Game
 			throw new Exception("Could not create the window");
 
 		glfwMakeContextCurrent(window);
-		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
 		glfwSwapInterval(settings.get!bool("window", "vsync") ? 1 : 0);
 
 		if (settings.get!bool("framebuffer", "legacyOpenGL"))
@@ -44,8 +43,7 @@ class Game
 			framebuffer = new FramebufferOpenGL3(log, settings);
 
 		shouldRun = true;
-		text = new Text(log, "data/fonts/noto-bold.ttf", 30);
-		bigText = new Text(log, "data/fonts/noto-bold.ttf", 400);
+		text = new Text(log, "data/fonts/liberation-regular.ttf", 14);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -92,25 +90,38 @@ class Game
 
 	void render(double interpolation)
 	{
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		//mouseY = settings.displayHeight - mouseY - 1;
+		int windowWidth, windowHeight, framebufferWidth, framebufferHeight, mouseX, mouseY, scaledMouseX, scaledMouseY;
+		double tempMouseX, tempMouseY;
+
+		glfwGetWindowSize(window, &windowWidth, &windowHeight);
+		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+		glfwGetCursorPos(window, &tempMouseX, &tempMouseY);
+		mouseX = cast(int)(tempMouseX + 0.5);
+		mouseY = cast(int)(-tempMouseY + framebufferHeight - 1 + 0.5);
+		scaledMouseX = cast(int)(((mouseX / cast(double)framebufferWidth) * framebuffer.width) + 0.5);
+		scaledMouseY = cast(int)(((mouseY / cast(double)framebufferHeight) * framebuffer.height) + 0.5);
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			//rasterizer.drawCircle(framebuffer, cast(int)mouseX, cast(int)mouseY, 60, Color(255, 255, 255, 128));
-			//rasterizer.drawRectangle(framebuffer, cast(int)mouseX, cast(int)mouseY, 20, 20, Color(255, 255, 255, 128));
-			text.drawText(framebuffer, cast(int)mouseX, cast(int)mouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
+			rasterizer.drawCircle(framebuffer, scaledMouseX, scaledMouseY, 60, Color(255, 255, 255, 128));
+			//rasterizer.drawRectangle(framebuffer, scaledMouseX, scaledMouseY, 1, 1, Color(255, 255, 255, 255));
+			//text.drawText(framebuffer, scaledMouseX, scaledMouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
 		}
 
 		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
 		//rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
 
-		//text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
-		//text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
-		//text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 2), "W w: " ~ to!dstring(windowWidth), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 3), "W h: " ~ to!dstring(windowHeight), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 4), "F w: " ~ to!dstring(framebufferWidth), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 5), "F h: " ~ to!dstring(framebufferHeight), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 6), "M x: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 7), "M y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 8), "S x: " ~ to!dstring(scaledMouseX), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 9), "S y: " ~ to!dstring(scaledMouseY), Color(255, 255, 255, 128));
 
-		//bigText.drawText(framebuffer, 10, 10, "ABCD", Color(255, 255, 255, 128));
+		glViewport(0, 0, framebufferWidth, framebufferHeight);
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
@@ -127,15 +138,6 @@ class Game
 		Framebuffer framebuffer;
 		bool shouldRun;
 		Text text;
-		Text bigText;
 		FpsCounter renderFpsCounter;
-	}
-}
-
-extern(C) private nothrow
-{
-	void glfwFramebufferSizeCallback(GLFWwindow* window, int framebufferWidth, int framebufferHeight)
-	{
-		glViewport(0, 0, framebufferWidth, framebufferHeight);
 	}
 }
