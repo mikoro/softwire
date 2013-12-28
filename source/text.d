@@ -12,12 +12,13 @@ import std.string;
 
 import derelict.freetype.ft;
 
+import color;
 import logger;
 import framebuffer;
 
 class Text
 {
-	this(Logger log, string fontFileName, uint size)
+	this(Logger log, string fontFileName, int size)
 	{
 		this.log = log;
 
@@ -36,10 +37,8 @@ class Text
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
 
-	void drawText(Framebuffer framebuffer, uint x, uint y, dstring text, uint color)
+	void drawText(Framebuffer framebuffer, int x, int y, dstring text, Color textColor)
 	{
-		uint offsetX = x;
-
 		foreach (character; text)
 		{
 			if (!(character in glyphs))
@@ -47,40 +46,31 @@ class Text
 
 			foreach (i; 0 .. glyphs[character].bitmapHeight)
 			{
-				uint framebufferStart = offsetX + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
-				uint bitmapStart = i * glyphs[character].bitmapWidth;
+				int framebufferIndex = x + glyphs[character].adjustX + (y - glyphs[character].adjustY + i) * framebuffer.width;
+				int glyphBitmapIndex = i * glyphs[character].bitmapWidth;
 
 				foreach (j; 0 .. glyphs[character].bitmapWidth)
 				{
-					ubyte* fg1 = cast(ubyte*)&color;
-					ubyte* fg2 = cast(ubyte*)&glyphs[character].bitmap[bitmapStart + j];
+					Color glyphPixelColor = Color(&glyphs[character].bitmap[glyphBitmapIndex + j]);
 
-					if (fg1[3] == 0 || fg2[3] == 0)
+					if (textColor.alpha == 0 || glyphPixelColor.alpha == 0)
 						continue;
 
-					ubyte finalAlpha = cast(ubyte)(fg2[3] / (255.0 / fg1[3]));
-					uint finalColor = (finalAlpha << 24) | (color & 0x00ffffff);
-					ubyte* fg3 = cast(ubyte*)&finalColor;
+					ubyte combinedAlpha = cast(ubyte)((glyphPixelColor.alpha / (255.0 / textColor.alpha)) + 0.5);
+					Color combinedPixelColor = Color(textColor.red, textColor.green, textColor.blue, combinedAlpha);
 
-					if (fg3[3] == 0xff)
+					if (combinedPixelColor.alpha == 255)
 					{
-						framebuffer.pixelData[framebufferStart + j] = finalColor;
+						framebuffer.pixelData[framebufferIndex + j] = combinedPixelColor.value;
 						continue;
 					}
 
-					ubyte* bg = cast(ubyte*)(&framebuffer.pixelData[framebufferStart + j]);
-
-					uint alpha = fg3[3] + 1;
-					uint invAlpha = 257 - alpha;
-
-					bg[0] = cast(ubyte)((alpha * fg3[0] + invAlpha * bg[0]) >> 8);
-					bg[1] = cast(ubyte)((alpha * fg3[1] + invAlpha * bg[1]) >> 8);
-					bg[2] = cast(ubyte)((alpha * fg3[2] + invAlpha * bg[2]) >> 8);
-					bg[3] = 0xff;
+					Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
+					combinedPixelColor.alphaBlendDirect(framebufferPixelColor);
 				}
 			}
 
-			offsetX += glyphs[character].advanceX;
+			x += glyphs[character].advanceX;
 		}
 	}
 
@@ -95,18 +85,21 @@ class Text
 			glyph.bitmap = new uint[bitmap.rows * bitmap.width];
 			glyph.bitmapWidth = bitmap.width;
 			glyph.bitmapHeight = bitmap.rows;
+
+			// http://freetype.org/freetype2/docs/glyphs/glyphs-3.html
 			glyph.adjustX = cast(int)(face.glyph.metrics.horiBearingX >> 6);
 			glyph.adjustY = cast(int)((face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6);
 			glyph.advanceX = cast(int)(face.glyph.metrics.horiAdvance >> 6);
 
-			const(ubyte)* bufferIndex = bitmap.buffer;
+			const(ubyte)* bufferPtr = bitmap.buffer;
 
+			// http://freetype.org/freetype2/docs/glyphs/glyphs-7.html
 			foreach_reverse (i; 0 .. bitmap.rows)
 			{
 				foreach (j; 0 .. bitmap.width)
-					glyph.bitmap[i * bitmap.width + j] = (bufferIndex[j] << 24) | 0x00ffffff;
+					glyph.bitmap[i * bitmap.width + j] = (bufferPtr[j] << 24) | 0x00ffffff; // use the alpha value combined with a white color
 
-				bufferIndex += bitmap.pitch;
+				bufferPtr += bitmap.pitch;
 			}
 
 			glyphs[character] = glyph;

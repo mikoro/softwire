@@ -45,6 +45,7 @@ class Game
 
 		shouldRun = true;
 		text = new Text(log, "data/fonts/noto-bold.ttf", 14);
+		bigText = new Text(log, "data/fonts/noto-bold.ttf", 400);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -104,9 +105,11 @@ class Game
 		//rasterizer.drawCircle(framebuffer, 20, 20, 20, 0x7fffffff);
 		//rasterizer.drawRectangle(framebuffer, 10, 10, 1260, 780, Color(255, 0, 0, 128));
 
-		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), 0x7fffffff);
-		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), 0x7fffffff);
-		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), 0x7fffffff);
+		text.drawText(framebuffer, 5, framebuffer.height - 16, "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - 48, "X: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
+		text.drawText(framebuffer, 5, framebuffer.height - 64, "Y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
+
+		bigText.drawText(framebuffer, 10, 10, "ABCD", Color(255, 255, 255, 128));
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
@@ -123,6 +126,7 @@ class Game
 		Framebuffer framebuffer;
 		bool shouldRun;
 		Text text;
+		Text bigText;
 		FpsCounter renderFpsCounter;
 	}
 }
