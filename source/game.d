@@ -18,7 +18,6 @@ import framebuffer;
 import logger;
 import rasterizer;
 import settings;
-import settings2;
 import text;
 
 class Game
@@ -26,21 +25,20 @@ class Game
 	this(Logger log)
 	{
 		this.log = log;
-		settings = new Settings(log, "softwire.conf");
-		settings2 = new Settings2(log, "softwire.ini");
+		settings = new Settings(log, "softwire.ini");
 
 		log.logInfo("Creating the window");
 
-		window = glfwCreateWindow(settings.displayWidth, settings.displayHeight, "Softwire", settings.isFullscreen ? glfwGetPrimaryMonitor() : null, null);
+		window = glfwCreateWindow(settings.get!int("window", "width"), settings.get!int("window", "height"), "Softwire", settings.get!bool("window", "fullscreen") ? glfwGetPrimaryMonitor() : null, null);
 
 		if (!window)
 			throw new Exception("Could not create the window");
 
 		glfwMakeContextCurrent(window);
 		glfwSetFramebufferSizeCallback(window, &glfwFramebufferSizeCallback);
-		glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
+		glfwSwapInterval(settings.get!bool("window", "vsync") ? 1 : 0);
 
-		if (settings.useLegacyOpenGL)
+		if (settings.get!bool("framebuffer", "legacyOpenGL"))
 			framebuffer = new FramebufferOpenGL1(log, settings);
 		else
 			framebuffer = new FramebufferOpenGL3(log, settings);
@@ -53,7 +51,7 @@ class Game
 
 	void mainLoop()
 	{
-		log.logInfo("Starting the main loop");
+		log.logInfo("Entering the main loop");
 
 		double timeStep = 1.0 / 60;
 		double currentTime = glfwGetTime();
@@ -96,7 +94,7 @@ class Game
 	{
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
-		mouseY = settings.displayHeight - mouseY - 1;
+		//mouseY = settings.displayHeight - mouseY - 1;
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -125,7 +123,6 @@ class Game
 	{
 		Logger log;
 		Settings settings;
-		Settings2 settings2;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		bool shouldRun;

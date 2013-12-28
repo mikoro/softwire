@@ -78,7 +78,6 @@ ifeq "$(wildcard bin)" ""
 	@echo "Preparing bin directory..."
 	mkdir -p bin
 	cp -R data bin
-	cp misc/softwire.conf bin
 	cp misc/softwire.ini bin
 endif
 
@@ -115,7 +114,6 @@ ifeq "$(PLATFORM)" "mac"
 	lipo -create -output Softwire.app/Contents/MacOS/softwire bin/softwire{32,64}
 endif
 	cp -R data $(DISTDATADIR)
-	cp misc/softwire.conf $(DISTDATADIR)
 	cp misc/softwire.ini $(DISTDATADIR)
 	cp LICENSE $(DISTDATADIR)/license.txt
 	pandoc -f markdown_github -t html5 -o $(DISTDATADIR)/readme.html --template=misc/pandoc/html5.template README.md

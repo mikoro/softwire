@@ -21,17 +21,17 @@ class Text
 	{
 		this.log = log;
 
-		log.logInfo("Loading font from %s", fontFileName);
+		log.logInfo("Loading font from %s (size: %s)", fontFileName, size);
 
 		FT_Error error = FT_Init_FreeType(&library);
 
 		if (error)
-			throw new Exception(format("Could not initialize Freetype: %s", error));
+			throw new Exception(format("Could not initialize the Freetype library: %s", error));
 
 		error = FT_New_Face(library, fontFileName.toStringz(), 0, &face);
 
 		if (error)
-			throw new Exception(format("Could not load font file: %s", error));
+			throw new Exception(format("Could not load font: %s", error));
 
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
@@ -43,7 +43,7 @@ class Text
 
 		foreach (character; text)
 		{
-			if (!(character in glyphs))
+			if (character !in glyphs)
 				generateGlyph(character);
 
 			Glyph glyph = glyphs[character];

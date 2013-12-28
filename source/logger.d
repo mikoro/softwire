@@ -63,7 +63,7 @@ class FileAndConsoleLogger : Logger
 
 	override void logThrowable(Throwable ex)
 	{
-		logMessage(MessageType.Error, format("%s:\n\n%s\n\n%s", typeid(ex).toString(), ex.msg, ex.info));
+		logMessage(MessageType.Error, format("%s: %s", typeid(ex).toString(), ex.msg));
 	}
 
 	private File logFile;
