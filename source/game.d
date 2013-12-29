@@ -43,8 +43,9 @@ class Game
 			framebuffer = new FramebufferOpenGL3(log, settings);
 
 		shouldRun = true;
-		text = new Text(log, "data/fonts/liberation-regular.ttf", 14);
-		bigText = new Text(log, "data/fonts/noto-bold.ttf", 400);
+		text = new Text(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
+		bigText = new Text(log, "data/fonts/dejavu-sans-bold.ttf", 400);
+		signatureText = new Text(log, "data/fonts/alexbrush-regular.ttf", 32);
 		renderFpsCounter = new FpsCounter();
 	}
 
@@ -116,6 +117,7 @@ class Game
 		text.drawText(framebuffer, 5, framebuffer.height - (16 * 10), "S y: " ~ to!dstring(scaledMouseY), Color(255, 255, 255, 128));
 
 		bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
+		signatureText.drawText(framebuffer, 5, 10, "Softwire", Color(255, 255, 255, 64));
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -142,6 +144,7 @@ class Game
 		bool shouldRun;
 		Text text;
 		Text bigText;
+		Text signatureText;
 		FpsCounter renderFpsCounter;
 	}
 }
