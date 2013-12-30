@@ -39,7 +39,7 @@ class FpsCounter
 		// the characteristics of this function are functions of the alpha value and the frequency of invocation
 		if ((currentTime - lastMovingAverageCalculationTime) > (1.0 / 15))
 		{
-			double alpha = 0.5;
+			double alpha = 0.25;
 			movingAverageFrameTime = alpha * (frameTimeSum / frameTimeSumCounter) + (1.0 - alpha) * previousMovingAverageFrameTime;
 
 			previousMovingAverageFrameTime = movingAverageFrameTime;

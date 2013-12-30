@@ -8,6 +8,7 @@
 module game;
 
 import std.conv;
+import std.stdio;
 
 import deimos.glfw.glfw3;
 import derelict.opengl3.gl;
@@ -29,20 +30,22 @@ class Game
 
 		log.logInfo("Creating the window");
 
-		window = glfwCreateWindow(settings.get!int("window", "width"), settings.get!int("window", "height"), "Softwire", settings.get!bool("window", "fullscreen") ? glfwGetPrimaryMonitor() : null, null);
+		window = glfwCreateWindow(settings.windowWidth, settings.windowHeight, "Softwire", settings.windowEnableFullscreen ? glfwGetPrimaryMonitor() : null, null);
 
 		if (!window)
 			throw new Exception("Could not create the window");
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(settings.get!bool("window", "vsync") ? 1 : 0);
+		glfwSwapInterval(settings.windowEnableVsync ? 1 : 0);
 
-		if (settings.get!bool("framebuffer", "legacyOpenGL"))
+		if (settings.framebufferUseOpenGL1)
 			framebuffer = new FramebufferOpenGL1(log, settings);
 		else
 			framebuffer = new FramebufferOpenGL3(log, settings);
 
 		shouldRun = true;
+		windowWidth = settings.windowWidth;
+		windowHeight = settings.windowHeight;
 		text = new Text(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
 		bigText = new Text(log, "data/fonts/dejavu-sans-bold.ttf", 400);
 		signatureText = new Text(log, "data/fonts/alexbrush-regular.ttf", 32);
@@ -88,49 +91,47 @@ class Game
 
 		if (glfwWindowShouldClose(window))
 			shouldRun = false;
+
+		int newWindowWidth, newWindowHeight;
+		double mouseX, mouseY;
+
+		glfwGetFramebufferSize(window, &newWindowWidth, &newWindowHeight);
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+
+		if (newWindowWidth != windowWidth || newWindowHeight != windowHeight)
+		{
+			windowWidth = newWindowWidth;
+			windowHeight = newWindowHeight;
+
+			glViewport(0, 0, windowWidth, windowHeight);
+		}
+
+		windowMouseX = cast(int)(mouseX + 0.5);
+		windowMouseY = cast(int)(windowHeight - mouseY - 1 + 0.5);
+		framebufferMouseX = cast(int)(((windowMouseX / cast(double)windowWidth) * framebuffer.width) + 0.5);
+		framebufferMouseY = cast(int)(((windowMouseY / cast(double)windowHeight) * framebuffer.height) + 0.5);
 	}
 
 	void render(double interpolation)
 	{
-		int windowWidth, windowHeight, framebufferWidth, framebufferHeight, mouseX, mouseY, scaledMouseX, scaledMouseY;
-		double tempMouseX, tempMouseY;
-
-		glfwGetWindowSize(window, &windowWidth, &windowHeight);
-		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-		glfwGetCursorPos(window, &tempMouseX, &tempMouseY);
-		mouseX = cast(int)(tempMouseX + 0.5);
-		mouseY = cast(int)(-tempMouseY + framebufferHeight - 1 + 0.5);
-		scaledMouseX = cast(int)(((mouseX / cast(double)framebufferWidth) * framebuffer.width) + 0.5);
-		scaledMouseY = cast(int)(((mouseY / cast(double)framebufferHeight) * framebuffer.height) + 0.5);
+		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
 		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
-		rasterizer.drawRectangle(framebuffer, 100, 100, 1060, 580, Color(255, 255, 255, 128));
+		//rasterizer.drawRectangle(framebuffer, 100, 100, 1060, 580, Color(255, 255, 255, 128));
+		//bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
+		//signatureText.drawText(framebuffer, 5, 10, "Softwire", Color(255, 255, 255, 64));
 
 		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 3), "W w: " ~ to!dstring(windowWidth), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 4), "W h: " ~ to!dstring(windowHeight), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 5), "F w: " ~ to!dstring(framebufferWidth), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 6), "F h: " ~ to!dstring(framebufferHeight), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 7), "M x: " ~ to!dstring(mouseX), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 8), "M y: " ~ to!dstring(mouseY), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 9), "S x: " ~ to!dstring(scaledMouseX), Color(255, 255, 255, 128));
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 10), "S y: " ~ to!dstring(scaledMouseY), Color(255, 255, 255, 128));
-
-		bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
-		signatureText.drawText(framebuffer, 5, 10, "Softwire", Color(255, 255, 255, 64));
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			rasterizer.drawCircle(framebuffer, scaledMouseX, scaledMouseY, 60, Color(0, 255, 0, 128));
-			//rasterizer.drawRectangle(framebuffer, scaledMouseX, scaledMouseY, 1, 1, Color(255, 255, 255, 255));
-			//text.drawText(framebuffer, scaledMouseX, scaledMouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
+			rasterizer.drawCircle(framebuffer, framebufferMouseX, framebufferMouseY, 60, Color(0, 255, 0, 128));
+			//rasterizer.drawRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 1, 1, Color(255, 255, 255, 255));
+			//text.drawText(framebuffer, framebufferMouseX, framebufferMouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
 		}
-
-		glViewport(0, 0, framebufferWidth, framebufferHeight);
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
-		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
 		renderFpsCounter.update();
 	}
@@ -142,9 +143,18 @@ class Game
 		GLFWwindow* window;
 		Framebuffer framebuffer;
 		bool shouldRun;
+
+		int windowWidth;
+		int windowHeight;
+		int windowMouseX;
+		int windowMouseY;
+		int framebufferMouseX;
+		int framebufferMouseY;
+
 		Text text;
 		Text bigText;
 		Text signatureText;
+
 		FpsCounter renderFpsCounter;
 	}
 }

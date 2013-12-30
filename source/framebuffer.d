@@ -66,8 +66,8 @@ class FramebufferOpenGL3 : Framebuffer
 
 		log.logInfo("OpenGL version: %s", DerelictGL3.loadedVersion);
 
-		width = cast(int)((settings.get!int("window", "width") * settings.get!double("framebuffer", "scale")) + 0.5);
-		height = cast(int)((settings.get!int("window", "height") * settings.get!double("framebuffer", "scale")) + 0.5);
+		width = cast(int)((settings.windowWidth * settings.framebufferScale) + 0.5);
+		height = cast(int)((settings.windowHeight * settings.framebufferScale) + 0.5);
 		pixelData = new uint[width * height];
 
 		log.logInfo("Compiling shaders");
@@ -111,7 +111,7 @@ class FramebufferOpenGL3 : Framebuffer
 
 		glGenSamplers(1, &samplerId);
 
-		if (settings.get!bool("framebuffer", "linearFiltering"))
+		if (settings.framebufferUseLinearFiltering)
 		{
 			glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -221,8 +221,8 @@ class FramebufferOpenGL1 : Framebuffer
 
 		log.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
-		width = cast(int)((settings.get!int("window", "width") * settings.get!double("framebuffer", "scale")) + 0.5);
-		height = cast(int)((settings.get!int("window", "height") * settings.get!double("framebuffer", "scale")) + 0.5);
+		width = cast(int)((settings.windowWidth * settings.framebufferScale) + 0.5);
+		height = cast(int)((settings.windowHeight * settings.framebufferScale) + 0.5);
 		pixelData = new uint[width * height];
 
 		glEnable(GL_TEXTURE_2D);
@@ -232,7 +232,7 @@ class FramebufferOpenGL1 : Framebuffer
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, cast(void*)0);
 
-		if (settings.get!bool("framebuffer", "linearFiltering"))
+		if (settings.framebufferUseLinearFiltering)
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

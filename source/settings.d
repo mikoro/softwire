@@ -19,6 +19,31 @@ class Settings
 	this(Logger log, string fileName)
 	{
 		this.log = log;
+		iniReader = new IniReader(log, fileName);
+	}
+
+	@property int windowWidth() { return iniReader.get!int("window", "width"); }
+	@property int windowHeight() { return iniReader.get!int("window", "height"); }
+	@property bool windowEnableFullscreen() { return iniReader.get!bool("window", "enableFullscreen"); }
+	@property bool windowEnableVsync() { return iniReader.get!bool("window", "enableVsync"); }
+
+	@property double framebufferScale() { return iniReader.get!double("framebuffer", "scale"); }
+	@property bool framebufferUseOpenGL1() { return iniReader.get!bool("framebuffer", "useOpenGL1"); }
+	@property bool framebufferEnableResizing() { return iniReader.get!bool("framebuffer", "enableResizing"); }
+	@property bool framebufferUseLinearFiltering() { return iniReader.get!bool("framebuffer", "useLinearFiltering"); }
+
+	private
+	{
+		Logger log;
+		IniReader iniReader;
+	}
+}
+
+class IniReader
+{
+	this(Logger log, string fileName)
+	{
+		this.log = log;
 		this.fileName = fileName;
 
 		log.logInfo("Reading settings from %s", fileName);
