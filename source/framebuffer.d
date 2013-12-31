@@ -30,6 +30,10 @@ class Framebuffer
 		glEnable(GL_TEXTURE_2D);
 		glClearColor(1.0, 0.0, 0.0, 0.0);
 		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void resize(int width, int height)

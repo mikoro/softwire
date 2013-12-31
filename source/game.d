@@ -94,6 +94,45 @@ class Game
 		if (glfwWindowShouldClose(window))
 			shouldRun = false;
 
+		if (glfwGetKey(window, GLFW_KEY_F10) == GLFW_PRESS)
+		{
+			if (!keyHandled[GLFW_KEY_F10])
+			{
+				framebuffer.useSmoothFiltering = !framebuffer.useSmoothFiltering;
+				keyHandled[GLFW_KEY_F10] = true;
+			}
+		}
+		else
+			keyHandled[GLFW_KEY_F10] = false;
+
+		if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS)
+		{
+			if (!keyHandled[GLFW_KEY_F11])
+			{
+				framebufferScale *= 0.5;
+				framebuffer.resize(cast(int)(windowWidth * framebufferScale + 0.5), cast(int)(windowHeight * framebufferScale + 0.5));
+				keyHandled[GLFW_KEY_F11] = true;
+			}
+		}
+		else
+			keyHandled[GLFW_KEY_F11] = false;
+
+		if (glfwGetKey(window, GLFW_KEY_F12) == GLFW_PRESS)
+		{
+			if (!keyHandled[GLFW_KEY_F12])
+			{
+				framebufferScale *= 2.0;
+
+				if (framebufferScale > 1.0)
+					framebufferScale = 1.0;
+
+				framebuffer.resize(cast(int)(windowWidth * framebufferScale + 0.5), cast(int)(windowHeight * framebufferScale + 0.5));
+				keyHandled[GLFW_KEY_F12] = true;
+			}
+		}
+		else
+			keyHandled[GLFW_KEY_F12] = false;
+
 		int newWindowWidth, newWindowHeight;
 		double mouseX, mouseY;
 
@@ -137,7 +176,6 @@ class Game
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
-
 		renderFpsCounter.update();
 	}
 
@@ -157,6 +195,8 @@ class Game
 		int framebufferMouseY;
 
 		double framebufferScale;
+
+		bool[int] keyHandled;
 
 		Text text;
 		Text bigText;
