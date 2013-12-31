@@ -28,9 +28,8 @@ class Settings
 	@property bool windowEnableVsync() { return iniReader.get!bool("window", "enableVsync"); }
 
 	@property double framebufferScale() { return iniReader.get!double("framebuffer", "scale"); }
-	@property bool framebufferUseOpenGL1() { return iniReader.get!bool("framebuffer", "useOpenGL1"); }
 	@property bool framebufferEnableResizing() { return iniReader.get!bool("framebuffer", "enableResizing"); }
-	@property bool framebufferUseLinearFiltering() { return iniReader.get!bool("framebuffer", "useLinearFiltering"); }
+	@property bool framebufferUseSmoothFiltering() { return iniReader.get!bool("framebuffer", "useSmoothFiltering"); }
 
 	private
 	{

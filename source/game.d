@@ -30,7 +30,11 @@ class Game
 
 		log.logInfo("Creating the window");
 
-		window = glfwCreateWindow(settings.windowWidth, settings.windowHeight, "Softwire", settings.windowEnableFullscreen ? glfwGetPrimaryMonitor() : null, null);
+		windowWidth = settings.windowWidth;
+		windowHeight = settings.windowHeight;
+		framebufferScale = settings.framebufferScale;
+
+		window = glfwCreateWindow(windowWidth, windowHeight, "Softwire", settings.windowEnableFullscreen ? glfwGetPrimaryMonitor() : null, null);
 
 		if (!window)
 			throw new Exception("Could not create the window");
@@ -38,14 +42,12 @@ class Game
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(settings.windowEnableVsync ? 1 : 0);
 
-		if (settings.framebufferUseOpenGL1)
-			framebuffer = new FramebufferOpenGL1(log, settings);
-		else
-			framebuffer = new FramebufferOpenGL3(log, settings);
+		framebuffer = new Framebuffer(log);
+		framebuffer.resize(cast(int)(windowWidth * framebufferScale + 0.5), cast(int)(windowHeight * framebufferScale + 0.5));
+		framebuffer.useSmoothFiltering = settings.framebufferUseSmoothFiltering;
 
 		shouldRun = true;
-		windowWidth = settings.windowWidth;
-		windowHeight = settings.windowHeight;
+
 		text = new Text(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
 		bigText = new Text(log, "data/fonts/dejavu-sans-bold.ttf", 400);
 		signatureText = new Text(log, "data/fonts/alexbrush-regular.ttf", 32);
@@ -103,6 +105,9 @@ class Game
 			windowWidth = newWindowWidth;
 			windowHeight = newWindowHeight;
 
+			if (settings.framebufferEnableResizing)
+				framebuffer.resize(cast(int)(windowWidth * framebufferScale + 0.5), cast(int)(windowHeight * framebufferScale + 0.5));
+
 			glViewport(0, 0, windowWidth, windowHeight);
 		}
 
@@ -118,7 +123,7 @@ class Game
 
 		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
 		//rasterizer.drawRectangle(framebuffer, 100, 100, 1060, 580, Color(255, 255, 255, 128));
-		//bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
+		bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
 		//signatureText.drawText(framebuffer, 5, 10, "Softwire", Color(255, 255, 255, 64));
 
 		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
@@ -150,6 +155,8 @@ class Game
 		int windowMouseY;
 		int framebufferMouseX;
 		int framebufferMouseY;
+
+		double framebufferScale;
 
 		Text text;
 		Text bigText;
