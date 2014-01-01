@@ -7,6 +7,8 @@
 
 module rasterizer;
 
+import std.algorithm;
+import std.math;
 import std.stdio;
 
 import color;
@@ -132,6 +134,76 @@ void drawCircle(Framebuffer framebuffer, int x, int y, int radius, Color circleC
 				Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
 				circleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
 			}
+		}
+	}
+}
+
+// http://en.wikipedia.org/wiki/Bresenham's_line_algorithm#Optimization
+// drawing outside the framebuffer is not allowed
+void drawLine(Framebuffer framebuffer, int x0, int y0, int x1, int y1, Color lineColor)
+{
+	bool steep = abs(y1 - y0) > abs(x1 - x0);
+
+	if (steep)
+	{
+		swap(x0, y0);
+		swap(x1, y1);
+	}
+
+	if (x0 > x1)
+	{
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+
+	int deltaX = x1 - x0;
+	int deltaY = abs(y1 - y0);
+	int error = deltaX / 2;
+	int stepY = (y0 < y1 ? 1 : -1);
+	int y = y0;
+
+	if (lineColor.alpha == 255)
+	{
+		foreach (x; x0 .. x1)
+		{
+			if (steep)
+				framebuffer.pixelData[y + x * framebuffer.width] = lineColor.value;
+			else
+				framebuffer.pixelData[x + y * framebuffer.width] = lineColor.value;
+
+			error -= deltaY;
+
+			if (error < 0)
+			{
+				y += stepY;
+				error += deltaX;
+			}
+		}
+
+		return;
+	}
+
+	lineColor.precalculateAlphaBlend();
+
+	foreach (x; x0 .. x1)
+	{
+		if (steep)
+		{
+			Color framebufferPixelColor = Color(&framebuffer.pixelData[y + x * framebuffer.width]);
+			lineColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
+		}
+		else
+		{
+			Color framebufferPixelColor = Color(&framebuffer.pixelData[x + y * framebuffer.width]);
+			lineColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
+		}
+
+		error -= deltaY;
+
+		if (error < 0)
+		{
+			y += stepY;
+			error += deltaX;
 		}
 	}
 }
