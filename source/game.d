@@ -161,19 +161,16 @@ class Game
 	{
 		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
-		//rasterizer.drawCircle(framebuffer, 20, 20, 20, Color(255, 255, 255, 128));
-		//rasterizer.drawRectangle(framebuffer, 100, 100, 1060, 580, Color(255, 255, 255, 128));
-		//bigText.drawText(framebuffer, -150, 300, "Softwire", Color(255, 0, 0, 200));
-		//signatureText.drawText(framebuffer, 5, 10, "Softwire", Color(255, 255, 255, 64));
-
-		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
+		//rasterizer.drawLine(framebuffer, 0, 0, 14, 14, Color(255, 255, 255, 255));
+		//rasterizer.drawClippedRectangle(framebuffer, 1, 1, 3, 3, Color(255, 255, 255, 255));
+		//rasterizer.drawClippedCircle(framebuffer, 7, 7, 9, Color(0, 255, 0, 255));
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			//rasterizer.drawCircle(framebuffer, framebufferMouseX, framebufferMouseY, 60, Color(0, 255, 0, 128));
-			//rasterizer.drawRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 1, 1, Color(255, 255, 255, 255));
-			//text.drawText(framebuffer, framebufferMouseX, framebufferMouseY, "Tämä on jonkinlainen teksti.", Color(255, 255, 255, 128));
 			rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
+			//rasterizer.drawPixel(framebuffer, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 255));
+			//rasterizer.drawClippedCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
+			//rasterizer.drawClippedRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
 		}
 
 		double angle = 0;
@@ -181,15 +178,17 @@ class Game
 
 		foreach (i; 0 .. 400)
 		{
-			int x0 = cast(int)(cos(angle) * 400.0 + 0.5) + framebuffer.width / 2;
-			int y0 = cast(int)(sin(angle) * 400.0 + 0.5) + framebuffer.height / 2;
-			int x1 = cast(int)(cos(angle + PI) * 400.0 + 0.5) + framebuffer.width / 2;
-			int y1 = cast(int)(sin(angle + PI) * 400.0 + 0.5) + framebuffer.height / 2;
+			int x0 = cast(int)(cos(angle) * (framebuffer.width - 1) / 2.0 + 0.5 + (framebuffer.width - 1) / 2.0);
+			int y0 = cast(int)(sin(angle) * (framebuffer.height - 1) / 2.0 + 0.5 + (framebuffer.height - 1) / 2.0);
+			int x1 = cast(int)(cos(angle + PI) * (framebuffer.width - 1) / 2.0 + 0.5 + (framebuffer.width - 1) / 2.0);
+			int y1 = cast(int)(sin(angle + PI) * (framebuffer.height - 1) / 2.0 + 0.5 + (framebuffer.height - 1) / 2.0);
 
 			rasterizer.drawLine(framebuffer, x0, y0, x1, y1, Color(255, 255, 255, 32));
 
 			angle += angleDelta;
 		}
+
+		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
 
 		framebuffer.render();
 		glfwSwapBuffers(window);
