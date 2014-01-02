@@ -1,6 +1,8 @@
 /**
  * Helper functions for color calculations.
  *
+ * Color format is assumed to be ABGR, i.e., 0xAABBGGRR.
+ *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file
  */
@@ -11,24 +13,7 @@ struct Color
 {
 	@disable this();
 
-	this(ubyte red, ubyte green, ubyte blue, ubyte alpha)
-	{
-		color = alpha << 24 |  blue << 16 | green << 8 | red << 0;
-		colorPtr = &color;
-		colorArray = cast(ubyte*)colorPtr;
-	}
-
-	this(Color color)
-	{
-		this(color.value);
-	}
-
-	this(Color color, ubyte alpha)
-	{
-		this(color.value);
-		this.alpha = alpha;
-	}
-
+	// create a new color from an integer representation (fast)
 	this(uint color)
 	{
 		this.color = color;
@@ -36,28 +21,38 @@ struct Color
 		this.colorArray = cast(ubyte*)colorPtr;
 	}
 
+	// create a new color encapsulating existing color value and modify it directly (fast)
 	this(uint* colorPtr)
 	{
 		this.colorPtr = colorPtr;
 		this.colorArray = cast(ubyte*)colorPtr;
 	}
 
-	static Color lerp(Color startColor, Color endColor, double alpha)
+	// copy another color (fast)
+	this(Color color)
 	{
-		Color newColor = Color(0, 0, 0, 0);
-
-		newColor.red = cast(ubyte)((startColor.red + (endColor.red - startColor.red) * alpha) + 0.5);
-		newColor.green = cast(ubyte)((startColor.green + (endColor.green - startColor.green) * alpha) + 0.5);
-		newColor.blue = cast(ubyte)((startColor.blue + (endColor.blue - startColor.blue) * alpha) + 0.5);
-		newColor.alpha = cast(ubyte)((startColor.alpha + (endColor.alpha - startColor.alpha) * alpha) + 0.5);
-
-		return newColor;
+		this(color.value);
 	}
 
-	/// Do alpha blending with another color and return a new color, originals are not modified.
+	// copy another color but set the alpha to another value (fast)
+	this(Color color, ubyte alpha)
+	{
+		this(color.value);
+		this.alpha = alpha;
+	}
+
+	// construct the color value from individual values (slow, do not call in a loop)
+	this(ubyte red, ubyte green, ubyte blue, ubyte alpha)
+	{
+		color = alpha << 24 |  blue << 16 | green << 8 | red << 0;
+		colorPtr = &color;
+		colorArray = cast(ubyte*)colorPtr;
+	}
+
+	// alpha blend with another color and return a new color, originals are not modified
 	Color alphaBlend(Color otherColor)
 	{
-		Color newColor = Color(0, 0, 0, 255);
+		Color newColor = Color(0xFF000000);
 
 		int tempAlpha = alpha + 1;
 		int tempInvAlpha = 257 - tempAlpha;
@@ -69,7 +64,7 @@ struct Color
 		return newColor;
 	}
 
-	/// Do alpha blending with another color and modify the other color directly.
+	// alpha blend with another color and modify the other color directly
 	void alphaBlendDirect(Color otherColor)
 	{
 		int tempAlpha = alpha + 1;
@@ -80,7 +75,7 @@ struct Color
 		otherColor.blue = cast(ubyte)((tempAlpha * blue + tempInvAlpha * otherColor.blue) >> 8);
 	}
 
-	/// Do alpha blending using precalculated values (precalculateAlphaBlend must be called before) and modify the other color directly.
+	// alpha blend using precalculated values (precalculateAlphaBlend must be called before) and modify the other color directly
 	void alphaBlendPrecalculatedDirect(Color otherColor)
 	{
 		otherColor.red = cast(ubyte)((precalcRed + precalcInvAlpha * otherColor.red) >> 8);
@@ -124,4 +119,17 @@ struct Color
 		int precalcGreen;
 		int precalcBlue;
 	}
+}
+
+// linearly interpolate between two color values
+Color lerp(Color startColor, Color endColor, double alpha)
+{
+	Color newColor = Color(0);
+
+	newColor.red = cast(ubyte)((startColor.red + (endColor.red - startColor.red) * alpha) + 0.5);
+	newColor.green = cast(ubyte)((startColor.green + (endColor.green - startColor.green) * alpha) + 0.5);
+	newColor.blue = cast(ubyte)((startColor.blue + (endColor.blue - startColor.blue) * alpha) + 0.5);
+	newColor.alpha = cast(ubyte)((startColor.alpha + (endColor.alpha - startColor.alpha) * alpha) + 0.5);
+
+	return newColor;
 }

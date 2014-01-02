@@ -162,15 +162,16 @@ class Game
 		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
 		//rasterizer.drawLine(framebuffer, 0, 0, 14, 14, Color(255, 255, 255, 255));
-		//rasterizer.drawClippedRectangle(framebuffer, 1, 1, 3, 3, Color(255, 255, 255, 255));
-		//rasterizer.drawClippedCircle(framebuffer, 7, 7, 9, Color(0, 255, 0, 255));
+		//rasterizer.drawClippedFilledRectangle(framebuffer, 1, 1, 3, 3, Color(255, 255, 255, 255));
+		//rasterizer.drawClippedFilledCircle(framebuffer, 7, 7, 9, Color(0, 255, 0, 255));
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
+			//rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
 			//rasterizer.drawPixel(framebuffer, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 255));
-			//rasterizer.drawClippedCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
-			//rasterizer.drawClippedRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
+			//rasterizer.drawClippedFilledCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
+			//rasterizer.drawClippedFilledRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
+			//text.drawText(framebuffer, framebufferMouseX, framebufferMouseY, "A", Color(255, 255, 255, 128));
 		}
 
 		double angle = 0;

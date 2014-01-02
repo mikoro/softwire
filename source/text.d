@@ -7,6 +7,7 @@
 
 module text;
 
+import std.math;
 import std.string;
 
 import derelict.freetype.ft;
@@ -36,6 +37,7 @@ class Text
 		FT_Set_Pixel_Sizes(face, 0, size);
 	}
 
+	// draw given text on a single line, can go outside the framebuffer
 	void drawText(Framebuffer framebuffer, int x, int y, dstring text, Color textColor)
 	{
 		if (textColor.alpha == 0)
@@ -62,13 +64,13 @@ class Text
 			int clipTop = 0;
 
 			if (adjustedX < 0)
-				clipLeft = -1 * adjustedX;
+				clipLeft = abs(adjustedX);
 
 			if (adjustedX + glyph.bitmapWidth > framebuffer.width)
 				clipRight = adjustedX + glyph.bitmapWidth - framebuffer.width;
 
 			if (adjustedY < 0)
-				clipBottom = -1 * adjustedY;
+				clipBottom = abs(adjustedY);
 
 			if (adjustedY + glyph.bitmapHeight > framebuffer.height)
 				clipTop = adjustedY + glyph.bitmapHeight - framebuffer.height;
@@ -148,7 +150,6 @@ class Text
 
 		Logger log;
 		Glyph[dchar] glyphs;
-
 		FT_Library library;
 		FT_Face face;
 	}

@@ -28,8 +28,10 @@ class Framebuffer
 		log.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
 		glEnable(GL_TEXTURE_2D);
-		glClearColor(1.0, 0.0, 0.0, 0.0);
+		glClearColor(1.0, 0.0, 0.0, 0.0); // base clear color is set to red which should never be visible (if it is, something is very wrong)
 		glGenTextures(1, &textureId);
+
+		// prevent color sampling errors on the framebuffer edges, especially when using linear filtering
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -46,14 +48,42 @@ class Framebuffer
 		pixelData.length = (width * height);
 		depthData.length = (width * height);
 
+		clear();
+	}
+
+	// clear framebuffer to black
+	void clear()
+	{
 		pixelData[] = 0;
-		depthData[] = 0;
+		depthData[] = float.max;
+	}
+
+	// clear framebuffer to given color
+	void clear(Color color)
+	{
+		pixelData[] = color.value;
+		depthData[] = float.max;
+	}
+
+	// clear framebuffer with a color gradient from bottom (start) to top (end)
+	void clear(Color startColor, Color endColor)
+	{
+		foreach (y; 0 .. height)
+		{
+			double alpha = y / cast(double)height;
+			pixelData[y * width .. y * width + width] = color.lerp(startColor, endColor, alpha).value;
+		}
+
+		depthData[] = float.max;
 	}
 
 	void render()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// transfer framebuffer data as a texture to the GPU
+		// GL_UNSIGNED_INT_8_8_8_8_REV (ABGR) as a source format seems to be fastest at least on Windows and NVidia hardware
+		// could use glTexSubImage2D but there was no performance difference
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
 
@@ -67,31 +97,8 @@ class Framebuffer
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void clear()
-	{
-		pixelData[] = 0;
-		depthData[] = 0;
-	}
-
-	void clear(Color color)
-	{
-		pixelData[] = color.value;
-		depthData[] = 0;
-	}
-
-	void clear(Color startColor, Color endColor)
-	{
-		foreach (y; 0 .. height)
-		{
-			double alpha = y / cast(double)height;
-			pixelData[y * width .. y * width + width] = Color.lerp(startColor, endColor, alpha).value;
-		}
-
-		depthData[] = 0;
-	}
-
-	@property bool useSmoothFiltering() { return _useSmoothFiltering; }
-
+	// if the framebuffer is smaller than the actual window, the framebuffer (texture) will be scaled up by the hardware
+	// linear filtering is smoother, nearest will be blocky
 	@property void useSmoothFiltering(bool value)
 	{
 		_useSmoothFiltering = value;
@@ -112,18 +119,17 @@ class Framebuffer
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	@property bool useSmoothFiltering() { return _useSmoothFiltering; }
+
 	int width;
 	int height;
-
 	uint[] pixelData;
 	float[] depthData;
 
 	private
 	{
 		Logger log;
-
 		GLuint textureId;
-
 		bool _useSmoothFiltering;
 	}
 }

@@ -113,7 +113,7 @@ body
 }
 
 // draw a solid color filled rectangle, can go outside the framebuffer
-void drawClippedRectangle(Framebuffer framebuffer, int x, int y, int width, int height, Color rectangleColor)
+void drawClippedFilledRectangle(Framebuffer framebuffer, int x, int y, int width, int height, Color rectangleColor)
 {
 	// if the alpha value is zero, nothing needs to be drawn
 	if (rectangleColor.alpha == 0)
@@ -172,7 +172,7 @@ void drawClippedRectangle(Framebuffer framebuffer, int x, int y, int width, int 
 }
 
 // draw a solid color filled circle, can go outside the framebuffer
-void drawClippedCircle(Framebuffer framebuffer, int x, int y, int radius, Color circleColor)
+void drawClippedFilledCircle(Framebuffer framebuffer, int x, int y, int radius, Color circleColor)
 {
 	if (circleColor.alpha == 0)
 		return;
