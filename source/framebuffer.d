@@ -1,5 +1,5 @@
 /**
- * A framebuffer implementation using OpenGL textured quads.
+ * Framebuffer implementation using OpenGL textured quads.
  *
  * Framebuffer is a byte array, each pixel taking four bytes in the ABGR format.
  * 0,0 is the bottom left corner.

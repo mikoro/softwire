@@ -1,11 +1,11 @@
 /**
- * Helper class for calculating FPS values.
+ * Calculate real-time FPS values with nice smoothing.
  *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file
  */
 
-module fpscounter;
+module fps_counter;
 
 import std.conv;
 import std.string;

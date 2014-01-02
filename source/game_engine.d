@@ -1,34 +1,35 @@
 /**
- * Game initialization and main loop logic.
+ * Game initialization and running logic.
  *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file
  */
 
-module game;
+module game_engine;
 
-import std.conv;
 import std.math;
-import std.stdio;
 
 import deimos.glfw.glfw3;
 import derelict.opengl3.gl;
 
 import color;
-import fpscounter;
+import fps_counter;
 import framebuffer;
 import logger;
 import rasterizer;
 import settings;
-import text;
+import text_rasterizer;
 
-class Game
+class GameEngine
 {
-	this(Logger log)
+	this(Logger log, Settings settings)
 	{
 		this.log = log;
-		settings = new Settings(log, "softwire.ini");
+		this.settings = settings;
+	}
 
+	void initialize()
+	{
 		log.logInfo("Creating the window");
 
 		windowWidth = settings.windowWidth;
@@ -47,22 +48,19 @@ class Game
 		framebuffer.resize(cast(int)(windowWidth * framebufferScale + 0.5), cast(int)(windowHeight * framebufferScale + 0.5));
 		framebuffer.useSmoothFiltering = settings.framebufferUseSmoothFiltering;
 
-		shouldRun = true;
-
-		text = new Text(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
-		bigText = new Text(log, "data/fonts/dejavu-sans-bold.ttf", 400);
-		signatureText = new Text(log, "data/fonts/alexbrush-regular.ttf", 32);
+		text = new TextRasterizer(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
+		bigText = new TextRasterizer(log, "data/fonts/dejavu-sans-bold.ttf", 400);
+		signatureText = new TextRasterizer(log, "data/fonts/alexbrush-regular.ttf", 32);
 		renderFpsCounter = new FpsCounter();
 	}
 
-	void mainLoop()
+	void run()
 	{
-		log.logInfo("Entering the main loop");
-
 		double timeStep = 1.0 / 60;
 		double currentTime = glfwGetTime();
 		double timeAccumulator = 0;
 
+		// http://gafferongames.com/game-physics/fix-your-timestep/
 		while (shouldRun)
 		{
 			double newTime = glfwGetTime();
@@ -85,7 +83,7 @@ class Game
 		}
 	}
 
-	void update(double timeStep)
+	private void update(double timeStep)
 	{
 		glfwPollEvents();
 
@@ -157,7 +155,7 @@ class Game
 		framebufferMouseY = cast(int)(((windowMouseY / cast(double)windowHeight) * framebuffer.height) + 0.5);
 	}
 
-	void render(double interpolation)
+	private void render(double interpolation)
 	{
 		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
@@ -167,7 +165,7 @@ class Game
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
-			//rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
+			rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
 			//rasterizer.drawPixel(framebuffer, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 255));
 			//rasterizer.drawClippedFilledCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
 			//rasterizer.drawClippedFilledRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
@@ -202,7 +200,7 @@ class Game
 		Settings settings;
 		GLFWwindow* window;
 		Framebuffer framebuffer;
-		bool shouldRun;
+		bool shouldRun = true;
 
 		int windowWidth;
 		int windowHeight;
@@ -215,9 +213,9 @@ class Game
 
 		bool[int] keyHandled;
 
-		Text text;
-		Text bigText;
-		Text signatureText;
+		TextRasterizer text;
+		TextRasterizer bigText;
+		TextRasterizer signatureText;
 
 		FpsCounter renderFpsCounter;
 	}

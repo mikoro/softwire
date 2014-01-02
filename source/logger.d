@@ -1,5 +1,5 @@
 /**
- * A simple logger class.
+ * Simple console and file logging.
  *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file
@@ -45,7 +45,7 @@ class Logger
 	}
 }
 
-class FileAndConsoleLogger : Logger
+class ConsoleFileLogger : Logger
 {
 	this(string fileName)
 	{

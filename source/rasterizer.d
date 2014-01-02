@@ -9,7 +9,6 @@ module rasterizer;
 
 import std.algorithm;
 import std.math;
-import std.stdio;
 
 import color;
 import framebuffer;

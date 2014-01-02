@@ -15,7 +15,9 @@ import std.string;
 import deimos.glfw.glfw3;
 
 import logger;
-import game;
+import game_engine;
+import ini_reader;
+import settings;
 
 private Logger log;
 
@@ -28,16 +30,20 @@ int main()
 
 	scope(exit) { glfwTerminate(); }
 
-	log = new FileAndConsoleLogger("softwire.log");
+	log = new ConsoleFileLogger("softwire.log");
 
 	try
 	{
-		Game game = new Game(log);
-		game.mainLoop();
+		IniReader iniReader = new IniReader(log, "softwire.ini");
+		Settings settings = new Settings(iniReader);
+		GameEngine gameEngine = new GameEngine(log, settings);
+
+		gameEngine.initialize();
+		gameEngine.run();
 	}
-	catch(Throwable ex)
+	catch(Throwable t)
 	{
-		log.logThrowable(ex);
+		log.logThrowable(t);
 		return -1;
 	}
 

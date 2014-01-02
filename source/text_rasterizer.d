@@ -1,11 +1,11 @@
 /**
- * Text rendering with the Freetype library.
+ * Text rasterization with the Freetype library.
  *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file
  */
 
-module text;
+module text_rasterizer;
 
 import std.math;
 import std.string;
@@ -16,7 +16,7 @@ import color;
 import logger;
 import framebuffer;
 
-class Text
+class TextRasterizer
 {
 	this(Logger log, string fontFileName, int size)
 	{
@@ -106,38 +106,38 @@ class Text
 		}
 	}
 
-	private
+	private void generateGlyph(dchar character)
 	{
-		void generateGlyph(dchar character)
+		//FT_Load_Char(face, character, FT_LOAD_FORCE_AUTOHINT | FT_LOAD_RENDER);
+		FT_Load_Char(face, character, FT_LOAD_RENDER);
+		FT_Bitmap* bitmap = &face.glyph.bitmap;
+
+		Glyph glyph;
+		glyph.bitmap = new ubyte[bitmap.width * bitmap.rows];
+		glyph.bitmapWidth = bitmap.width;
+		glyph.bitmapHeight = bitmap.rows;
+
+		// http://freetype.org/freetype2/docs/glyphs/glyphs-3.html
+		glyph.adjustX = cast(int)(face.glyph.metrics.horiBearingX >> 6);
+		glyph.adjustY = cast(int)((face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6);
+		glyph.advanceX = cast(int)(face.glyph.metrics.horiAdvance >> 6);
+
+		const(ubyte)* bufferPtr = bitmap.buffer;
+
+		// http://freetype.org/freetype2/docs/glyphs/glyphs-7.html
+		foreach_reverse (i; 0 .. bitmap.rows)
 		{
-			//FT_Load_Char(face, character, FT_LOAD_FORCE_AUTOHINT | FT_LOAD_RENDER);
-			FT_Load_Char(face, character, FT_LOAD_RENDER);
-			FT_Bitmap* bitmap = &face.glyph.bitmap;
+			foreach (j; 0 .. bitmap.width)
+				glyph.bitmap[i * bitmap.width + j] = bufferPtr[j];
 
-			Glyph glyph;
-			glyph.bitmap = new ubyte[bitmap.width * bitmap.rows];
-			glyph.bitmapWidth = bitmap.width;
-			glyph.bitmapHeight = bitmap.rows;
-
-			// http://freetype.org/freetype2/docs/glyphs/glyphs-3.html
-			glyph.adjustX = cast(int)(face.glyph.metrics.horiBearingX >> 6);
-			glyph.adjustY = cast(int)((face.glyph.metrics.height - face.glyph.metrics.horiBearingY) >> 6);
-			glyph.advanceX = cast(int)(face.glyph.metrics.horiAdvance >> 6);
-
-			const(ubyte)* bufferPtr = bitmap.buffer;
-
-			// http://freetype.org/freetype2/docs/glyphs/glyphs-7.html
-			foreach_reverse (i; 0 .. bitmap.rows)
-			{
-				foreach (j; 0 .. bitmap.width)
-					glyph.bitmap[i * bitmap.width + j] = bufferPtr[j];
-
-				bufferPtr += bitmap.pitch;
-			}
-
-			glyphs[character] = glyph;
+			bufferPtr += bitmap.pitch;
 		}
 
+		glyphs[character] = glyph;
+	}
+
+	private
+	{
 		struct Glyph
 		{
 			ubyte[] bitmap;
