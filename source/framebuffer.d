@@ -27,15 +27,14 @@ class Framebuffer
 
 		log.logInfo("OpenGL version: %s", DerelictGL.loadedVersion);
 
-		glEnable(GL_TEXTURE_2D);
 		glClearColor(1.0, 0.0, 0.0, 0.0); // base clear color is set to red which should never be visible (if it is, something is very wrong)
+		glEnable(GL_TEXTURE_2D);
 		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		// prevent color sampling errors on the framebuffer edges, especially when using linear filtering
-		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void resize(int width, int height)
@@ -45,10 +44,14 @@ class Framebuffer
 		this.width = width;
 		this.height = height;
 
+		// resize the arrays
 		pixelData.length = (width * height);
 		depthData.length = (width * height);
 
 		clear();
+
+		// allocate the texture memory
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
 	}
 
 	// clear framebuffer to black
@@ -81,11 +84,9 @@ class Framebuffer
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// transfer framebuffer data as a texture to the GPU
+		// update the texture data
 		// GL_UNSIGNED_INT_8_8_8_8_REV (ABGR) as a source format seems to be fastest at least on Windows and NVidia hardware
-		// could use glTexSubImage2D but there was no performance difference
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, pixelData.ptr);
 
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  0.0);
@@ -93,8 +94,6 @@ class Framebuffer
 		glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0,  0.0);
 		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0,  0.0);
 		glEnd();
-
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	// if the framebuffer is smaller than the actual window, the framebuffer (texture) will be scaled up by the hardware
@@ -102,8 +101,6 @@ class Framebuffer
 	@property void useSmoothFiltering(bool value)
 	{
 		_useSmoothFiltering = value;
-
-		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		if (_useSmoothFiltering)
 		{
@@ -115,8 +112,6 @@ class Framebuffer
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
-
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	@property bool useSmoothFiltering() { return _useSmoothFiltering; }
