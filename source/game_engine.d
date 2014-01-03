@@ -170,43 +170,32 @@ class GameEngine
 			//rasterizer.drawClippedFilledCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
 			//rasterizer.drawClippedFilledRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
 			//text.drawText(framebuffer, framebufferMouseX, framebufferMouseY, "A", Color(255, 255, 255, 128));
-
-			if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-			{
-				x0 = framebufferMouseX;
-				y0 = framebufferMouseY;
-			}
-
-			if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-			{
-				x1 = framebufferMouseX;
-				y1 = framebufferMouseY;
-			}
-
-			if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-			{
-				x2 = framebufferMouseX;
-				y2 = framebufferMouseY;
-			}
 		}
 
-		rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(255, 255, 255, 128));
-		rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1 + 200, x2, y2, Color(255, 255, 255, 128));
+		//rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(255, 255, 255, 128));
 
-		//double angle = 0;
-		//double angleDelta = (PI * 2.0) / 400;
+		double angle = 0;
+		double angleDelta = (PI * 2.0) / 400;
+		foreach (i; 0 .. 400)
+		{
+			int xx0 = cast(int)(cos(angle) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
+			int yy0 = cast(int)(sin(angle) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
+			int xx1 = cast(int)(cos(angle + PI) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
+			int yy1 = cast(int)(sin(angle + PI) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
+			rasterizer.drawLine(framebuffer, xx0, yy0, xx1, yy1, Color(255, 255, 255, 64));
+			angle += angleDelta;
+		}
 
-		//foreach (i; 0 .. 400)
-		//{
-		//	int x0 = cast(int)(cos(angle) * (framebuffer.width - 1) / 2.0 + 0.5 + (framebuffer.width - 1) / 2.0);
-		//	int y0 = cast(int)(sin(angle) * (framebuffer.height - 1) / 2.0 + 0.5 + (framebuffer.height - 1) / 2.0);
-		//	int x1 = cast(int)(cos(angle + PI) * (framebuffer.width - 1) / 2.0 + 0.5 + (framebuffer.width - 1) / 2.0);
-		//	int y1 = cast(int)(sin(angle + PI) * (framebuffer.height - 1) / 2.0 + 0.5 + (framebuffer.height - 1) / 2.0);
+		double time = glfwGetTime();
+		int x0 = cast(int)(cos(time) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
+		int y0 = cast(int)(sin(time) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
+		int x1 = cast(int)(cos(time + 2.0 * PI * (1.0/3.0)) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
+		int y1 = cast(int)(sin(time + 2.0 * PI * (1.0/3.0)) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
+		int x2 = cast(int)(cos(time + 2.0 * PI * (2.0/3.0)) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
+		int y2 = cast(int)(sin(time + 2.0 * PI * (2.0/3.0)) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
+		rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(255, 106, 0, 128));
 
-		//	rasterizer.drawLine(framebuffer, x0, y0, x1, y1, Color(255, 255, 255, 32));
-
-		//	angle += angleDelta;
-		//}
+		rasterizer.drawClippedFilledCircle(framebuffer, cast(int)((framebuffer.width - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 4.0 + 0.5), Color(255, 0, 0, 128));
 
 		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
 
@@ -239,14 +228,5 @@ class GameEngine
 		TextRasterizer signatureText;
 
 		FpsCounter renderFpsCounter;
-
-		int x0 = 600;
-		int y0 = 100;
-
-		int x1 = 400;
-		int y1 = 200;
-
-		int x2 = 800;
-		int y2 = 300;
 	}
 }
