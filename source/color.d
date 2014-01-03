@@ -1,7 +1,7 @@
 /**
  * Helper functions for color calculations.
  *
- * Color format is assumed to be ABGR, i.e., 0xAABBGGRR.
+ * Color format is assumed to be 32-bit uint ABGR (0xAABBGGRR) and stored in little-endian order.
  *
  * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
  * License: GPLv3, see the LICENSE file

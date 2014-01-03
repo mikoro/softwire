@@ -9,6 +9,7 @@ module rasterizer;
 
 import std.algorithm;
 import std.math;
+import std.stdio;
 
 import color;
 import framebuffer;
@@ -17,10 +18,8 @@ import framebuffer;
 void drawPixel(Framebuffer framebuffer, int x, int y, Color pixelColor)
 in
 {
-	assert(x >= 0);
-	assert(x < framebuffer.width);
-	assert(y >= 0);
-	assert(y < framebuffer.height);
+	assert(x >= 0 && x < framebuffer.width, "x-coordinate is out of range");
+	assert(y >= 0 && y < framebuffer.height, "y-coordinate is out of range");
 }
 body
 {
@@ -38,10 +37,8 @@ body
 void drawLine(Framebuffer framebuffer, int x0, int y0, int x1, int y1, Color lineColor)
 in
 {
-	assert(x0 >= 0 && x1 >= 0);
-	assert(x0 < framebuffer.width && x1 < framebuffer.width);
-	assert(y0 >= 0 && y1 >= 0);
-	assert(y0 < framebuffer.height && y1 < framebuffer.height);
+	assert(x0 >= 0 && x1 >= 0 && x0 < framebuffer.width && x1 < framebuffer.width, "x-coordinate is out of range");
+	assert(y0 >= 0 && y1 >= 0 && y0 < framebuffer.height && y1 < framebuffer.height, "y-coordinate is out of range");
 }
 body
 {
@@ -231,6 +228,116 @@ void drawClippedFilledCircle(Framebuffer framebuffer, int x, int y, int radius, 
 			{
 				Color framebufferPixelColor = Color(&framebuffer.pixelData[framebufferIndex + j]);
 				circleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
+			}
+		}
+	}
+}
+
+void drawFilledTriangle(Framebuffer framebuffer, int x0, int y0, int x1, int y1, int x2, int y2, Color triangleColor)
+in
+{
+	assert(x0 >= 0 && x1 >= 0 && x2 >= 0 && x0 < framebuffer.width && x1 < framebuffer.width && x2 < framebuffer.width, "x-coordinate is out of range");
+	assert(y0 >= 0 && y1 >= 0 && y2 >= 0 && y0 < framebuffer.height && y1 < framebuffer.height && y2 < framebuffer.height, "y-coordinate is out of range");
+}
+body
+{
+	if(y0 > y1) { swap(x0, x1); swap(y0, y1); }
+	if(y0 > y2) { swap(x0, x2); swap(y0, y2); }
+	if(y1 > y2) { swap(x1, x2); swap(y1, y2); }
+
+	bool middleLineRendered;
+
+	if (triangleColor.alpha != 255)
+		triangleColor.precalculateAlphaBlend();
+
+	if(y0 != y1)
+	{
+		double leftDelta = (x1 - x0) / cast(double)(y1 - y0);
+		double rightDelta = (x2 - x0) / cast(double)(y2 - y0);
+
+		if(leftDelta > rightDelta)
+			swap(leftDelta, rightDelta);
+
+		double leftX = x0, rightX = x0;
+		middleLineRendered = true;
+
+		if (triangleColor.alpha == 255)
+		{
+			foreach(y; y0 .. y1 + 1)
+			{
+				int framebufferIndex = y * framebuffer.width;
+				int leftFramebufferIndex = framebufferIndex + cast(int)(leftX + 0.5);
+				int rightFramebufferIndex = framebufferIndex + cast(int)(rightX + 0.5);
+
+				framebuffer.pixelData[leftFramebufferIndex .. rightFramebufferIndex] = triangleColor.value;
+
+				leftX += leftDelta;
+				rightX += rightDelta;
+			}
+		}
+		else
+		{
+			foreach(y; y0 .. y1 + 1)
+			{
+				int framebufferIndex = y * framebuffer.width;
+				int leftFramebufferIndex = framebufferIndex + cast(int)(leftX + 0.5);
+				int rightFramebufferIndex = framebufferIndex + cast(int)(rightX + 0.5);
+
+				foreach(index; leftFramebufferIndex .. rightFramebufferIndex)
+				{
+					Color framebufferPixelColor = Color(&framebuffer.pixelData[index]);
+					triangleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
+				}
+
+				leftX += leftDelta;
+				rightX += rightDelta;
+			}
+		}
+	}
+
+	if(y1 != y2)
+	{
+		double leftDelta = -(x1 - x2) / cast(double)(y1 - y2);
+		double rightDelta = -(x0 - x2) / cast(double)(y0 - y2);
+
+		if(leftDelta > rightDelta)
+			swap(leftDelta, rightDelta);
+
+		double leftX = x2, rightX = x2;
+
+		if(middleLineRendered)
+			++y1;
+
+		if (triangleColor.alpha == 255)
+		{
+			foreach_reverse(y; y1 .. y2 + 1)
+			{
+				int framebufferIndex = y * framebuffer.width;
+				int leftFramebufferIndex = framebufferIndex + cast(int)(leftX + 0.5);
+				int rightFramebufferIndex = framebufferIndex + cast(int)(rightX + 0.5);
+
+				framebuffer.pixelData[leftFramebufferIndex .. rightFramebufferIndex] = triangleColor.value;
+
+				leftX += leftDelta;
+				rightX += rightDelta;
+			}
+		}
+		else
+		{
+			foreach_reverse(y; y1 .. y2 + 1)
+			{
+				int framebufferIndex = y * framebuffer.width;
+				int leftFramebufferIndex = framebufferIndex + cast(int)(leftX + 0.5);
+				int rightFramebufferIndex = framebufferIndex + cast(int)(rightX + 0.5);
+
+				foreach(index; leftFramebufferIndex .. rightFramebufferIndex)
+				{
+					Color framebufferPixelColor = Color(&framebuffer.pixelData[index]);
+					triangleColor.alphaBlendPrecalculatedDirect(framebufferPixelColor);
+				}
+
+				leftX += leftDelta;
+				rightX += rightDelta;
 			}
 		}
 	}
