@@ -5,8 +5,8 @@
  * ABGR format (0xAABBGGRR) is used because it seems to be fastest on a (Intel) x86 + Windows (8, 64-bit) + NVidia (GTX 6xx+ series) combo.
  * 0,0 is the bottom left corner.
  *
- * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: GPLv3, see the LICENSE file
+ * Copyright © 2014 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT, see the LICENSE file.
  */
 
 module framebuffer;

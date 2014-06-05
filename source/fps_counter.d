@@ -1,8 +1,8 @@
 /**
  * Calculate real-time FPS values with nice smoothing.
  *
- * Copyright: Copyright © 2013 Mikko Ronkainen <firstname@mikkoronkainen.com>
- * License: GPLv3, see the LICENSE file
+ * Copyright © 2014 Mikko Ronkainen <firstname@mikkoronkainen.com>
+ * License: MIT, see the LICENSE file.
  */
 
 module fps_counter;
