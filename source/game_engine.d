@@ -49,7 +49,7 @@ class GameEngine
 		framebuffer.useSmoothFiltering = settings.framebufferUseSmoothFiltering;
 
 		text = new TextRasterizer(log, "data/fonts/dejavu-sans-mono-regular.ttf", 14);
-		bigText = new TextRasterizer(log, "data/fonts/dejavu-sans-bold.ttf", 400);
+		bigText = new TextRasterizer(log, "data/fonts/dejavu-sans-bold.ttf", 200);
 		signatureText = new TextRasterizer(log, "data/fonts/alexbrush-regular.ttf", 32);
 		renderFpsCounter = new FpsCounter();
 	}
@@ -159,21 +159,8 @@ class GameEngine
 	{
 		framebuffer.clear(Color(0, 0, 0, 255), Color(0, 100, 180, 255));
 
-		//rasterizer.drawLine(framebuffer, 0, 0, 14, 14, Color(255, 255, 255, 255));
-		//rasterizer.drawClippedFilledRectangle(framebuffer, 1, 1, 3, 3, Color(255, 255, 255, 255));
-		//rasterizer.drawClippedFilledCircle(framebuffer, 7, 7, 9, Color(0, 255, 0, 255));
-
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		{
-			//rasterizer.drawLine(framebuffer, framebuffer.width / 2, framebuffer.height / 2, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 128));
-			//rasterizer.drawPixel(framebuffer, framebufferMouseX, framebufferMouseY, Color(255, 255, 255, 255));
-			//rasterizer.drawClippedFilledCircle(framebuffer, framebufferMouseX, framebufferMouseY, 4, Color(255, 0, 0, 255));
-			//rasterizer.drawClippedFilledRectangle(framebuffer, framebufferMouseX, framebufferMouseY, 3, 3, Color(255, 255, 255, 255));
-			//text.drawText(framebuffer, framebufferMouseX, framebufferMouseY, "A", Color(255, 255, 255, 128));
-		}
-
-		//rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(255, 255, 255, 128));
-
+		bigText.drawText(framebuffer, (framebuffer.width - 930) / 2 - 15, framebuffer.height / 2 - 50, "Softwire", Color(0, 64, 255, 128));
+		
 		double angle = 0;
 		double angleDelta = (PI * 2.0) / 400;
 		foreach (i; 0 .. 400)
@@ -182,7 +169,7 @@ class GameEngine
 			int yy0 = cast(int)(sin(angle) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
 			int xx1 = cast(int)(cos(angle + PI) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
 			int yy1 = cast(int)(sin(angle + PI) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
-			rasterizer.drawLine(framebuffer, xx0, yy0, xx1, yy1, Color(255, 255, 255, 64));
+			rasterizer.drawLine(framebuffer, xx0, yy0, xx1, yy1, Color(255, 255, 255, 32));
 			angle += angleDelta;
 		}
 
@@ -193,10 +180,13 @@ class GameEngine
 		int y1 = cast(int)(sin(time + 2.0 * PI * (1.0/3.0)) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
 		int x2 = cast(int)(cos(time + 2.0 * PI * (2.0/3.0)) * (framebuffer.width - 1) / 2.0 + (framebuffer.width - 1) / 2.0 + 0.5);
 		int y2 = cast(int)(sin(time + 2.0 * PI * (2.0/3.0)) * (framebuffer.height - 1) / 2.0 + (framebuffer.height - 1) / 2.0 + 0.5);
-		rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(255, 106, 0, 128));
+		rasterizer.drawFilledTriangle(framebuffer, x0, y0, x1, y1, x2, y2, Color(0, 0, 0, 64));
 
-		rasterizer.drawClippedFilledCircle(framebuffer, cast(int)((framebuffer.width - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 4.0 + 0.5), Color(255, 0, 0, 128));
-
+		rasterizer.drawClippedFilledCircle(framebuffer, cast(int)((framebuffer.width - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 2.0 + 0.5), cast(int)((framebuffer.height - 1) / 4.0 + 0.5), Color(100, 200, 255, 128));
+		
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+			rasterizer.drawClippedFilledCircle(framebuffer, framebufferMouseX, framebufferMouseY, 100, Color(255, 0, 0, 128));
+		
 		text.drawText(framebuffer, 5, framebuffer.height - (16 * 1), "FPS: " ~ renderFpsCounter.getFpsString(), Color(255, 255, 255, 128));
 
 		framebuffer.render();
