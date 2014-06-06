@@ -116,7 +116,7 @@ endif
 	cp -R data $(DISTDATADIR)
 	cp misc/softwire.ini $(DISTDATADIR)
 	cp LICENSE $(DISTDATADIR)/license.txt
-	7z a -tzip -mx9 -xr!.DS_Store softwire-$(PLATFORM)-$(VERSION).zip $(DISTDIR)
+	7z a -tzip -mx9 -xr!.DS_Store softwire-$(VERSION)-$(PLATFORM).zip $(DISTDIR)
 	rm -rf $(DISTDIR)
 
 clean:
