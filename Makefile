@@ -116,7 +116,6 @@ endif
 	cp -R data $(DISTDATADIR)
 	cp misc/softwire.ini $(DISTDATADIR)
 	cp LICENSE $(DISTDATADIR)/license.txt
-	pandoc -f markdown_github -t html5 -o $(DISTDATADIR)/readme.html --template=misc/pandoc/html5.template README.md
 	7z a -tzip -mx9 -xr!.DS_Store softwire-$(PLATFORM)-$(VERSION).zip $(DISTDIR)
 	rm -rf $(DISTDIR)
 
